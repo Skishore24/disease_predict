@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediPredict AI - Authentication</title>
+    <link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <div class="auth-wrapper">
+        <!-- Login Card -->
+        <div class="auth-card fade-in" id="loginCard">
+            <div class="brand">
+                <div class="brand-icon">M</div>
+                <h1>MediPredict AI</h1>
+                <p>Welcome back! Please login to your account</p>
+            </div>
+
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="loginEmail">Email Address</label>
+                    <div class="input-wrapper">
+                        <input type="email" id="loginEmail" placeholder="name@example.com" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="loginPassword" placeholder="••••••••" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary">Sign In</button>
+            </form>
+
+            <div class="auth-footer">
+                Don't have an account? <a href="#" onclick="toggleAuthMode('register')">Sign Up</a>
+            </div>
+        </div>
+
+        <!-- Register Card (Hidden initially) -->
+        <div class="auth-card fade-in hidden" id="registerCard">
+            <div class="brand">
+                <div class="brand-icon">M</div>
+                <h1>Create Account</h1>
+                <p>Get started with MediPredict AI platform</p>
+            </div>
+
+            <form id="registerForm" onsubmit="handleRegister(event)">
+                <div class="form-group">
+                    <label for="registerName">Full Name</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="registerName" placeholder="John Doe" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="registerEmail">Email Address</label>
+                    <div class="input-wrapper">
+                        <input type="email" id="registerEmail" placeholder="name@example.com" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="registerPassword">Password</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="registerPassword" placeholder="••••••••" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary">Sign Up</button>
+            </form>
+
+            <div class="auth-footer">
+                Already have an account? <a href="#" onclick="toggleAuthMode('login')">Sign In</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+</body>
+</html>

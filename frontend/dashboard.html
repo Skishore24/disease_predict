@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediPredict AI - Dashboard</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-badge">M</div>
+            <span>MediPredict AI</span>
+        </div>
+
+        <nav class="nav-links">
+            <div class="nav-item active" onclick="switchTab('overview', this)">
+                <span>📊</span> Overview
+            </div>
+            <div class="nav-item" onclick="switchTab('predict', this)">
+                <span>🧠</span> New Prediction
+            </div>
+            <div class="nav-item" onclick="switchTab('history', this)">
+                <span>🕒</span> Scan History
+            </div>
+        </nav>
+
+        <div class="logout-section">
+            <div class="btn-logout" onclick="logout()">
+                <span>🚪</span> Sign Out
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="content-wrapper">
+        <!-- Top Sticky Header -->
+        <header class="main-header">
+            <div>
+                <h3 id="tabHeaderTitle">Dashboard</h3>
+            </div>
+            <div class="user-profile">
+                <div class="user-avatar" id="avatarLetter">U</div>
+                <div class="user-info">
+                    <h4 id="userNameDisplay">User Name</h4>
+                    <p>Medical Professional</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dynamic Container -->
+        <div class="container">
+            
+            <!-- OVERVIEW TAB -->
+            <section id="overviewTab" class="tab-pane active">
+                <div class="page-title">System Status</div>
+                <div class="page-subtitle">Real-time statistics of predictions and clinical scans.</div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon icon-blue">👤</div>
+                        <div class="stat-details">
+                            <h3>Total Patients</h3>
+                            <h2 id="statPatients">0</h2>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon icon-cyan">⚡</div>
+                        <div class="stat-details">
+                            <h3>Predictions Run</h3>
+                            <h2 id="statPredictions">0</h2>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon icon-green">🎯</div>
+                        <div class="stat-details">
+                            <h3>Model Accuracy</h3>
+                            <h2>96.4%</h2>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon icon-purple">🦠</div>
+                        <div class="stat-details">
+                            <h3>Diseases Indexed</h3>
+                            <h2 id="statDiseases">7</h2>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-row">
+                    <div class="content-card">
+                        <div class="card-title">
+                            <span>System Overview</span>
+                            <span style="font-size: 12px; color: var(--accent-green);">● Operational</span>
+                        </div>
+                        <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 16px;">
+                            MediPredict AI utilizes a Random Forest Classifier trained on verified clinical symptom vectors. It analyzes user-reported symptom sets to output the most probable diagnosis along with a calculated confidence rating.
+                        </p>
+                        <p style="color: var(--text-secondary); line-height: 1.6;">
+                            This dashboard interface allows medical professionals to run instant diagnostics and review historical scans seamlessly.
+                        </p>
+                    </div>
+
+                    <div class="content-card">
+                        <div class="card-title">Recent Scans</div>
+                        <div class="recent-list" id="recentPredictionsList">
+                            <!-- Populated by JS -->
+                            <p style="color: var(--text-secondary); font-size: 13px; text-align: center;">No scans run yet.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PREDICT TAB -->
+            <section id="predictTab" class="tab-pane">
+                <div class="page-title">Disease Predictor</div>
+                <div class="page-subtitle">Input symptoms to run a diagnostic classification scan.</div>
+
+                <div class="predict-layout">
+                    <!-- Form side -->
+                    <div class="content-card">
+                        <form id="predictionForm" onsubmit="runPrediction(event)">
+                            <div class="form-section">
+                                <div class="form-group">
+                                    <label for="patientName">Patient Name</label>
+                                    <input type="text" id="patientName" class="form-input" placeholder="Enter patient name" required>
+                                </div>
+
+                                <div>
+                                    <div class="symptoms-title">Select Present Symptoms</div>
+                                    
+                                    <div class="symptom-toggle-row">
+                                        <div class="symptom-info">
+                                            <h5>Fever</h5>
+                                            <p>Elevated body temperature above 37.8°C</p>
+                                        </div>
+                                        <label class="switch">
+                                            <input type="checkbox" id="symptomFever">
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+
+                                    <div class="symptom-toggle-row">
+                                        <div class="symptom-info">
+                                            <h5>Cough</h5>
+                                            <p>Persistent dry or productive cough</p>
+                                        </div>
+                                        <label class="switch">
+                                            <input type="checkbox" id="symptomCough">
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+
+                                    <div class="symptom-toggle-row">
+                                        <div class="symptom-info">
+                                            <h5>Headache</h5>
+                                            <p>Severe head pain or migraine sensations</p>
+                                        </div>
+                                        <label class="switch">
+                                            <input type="checkbox" id="symptomHeadache">
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+
+                                    <div class="symptom-toggle-row">
+                                        <div class="symptom-info">
+                                            <h5>Fatigue</h5>
+                                            <p>Extreme tiredness or lack of energy</p>
+                                        </div>
+                                        <label class="switch">
+                                            <input type="checkbox" id="symptomFatigue">
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+
+                                    <div class="symptom-toggle-row">
+                                        <div class="symptom-info">
+                                            <h5>Vomiting</h5>
+                                            <p>Nausea accompanied by vomiting</p>
+                                        </div>
+                                        <label class="switch">
+                                            <input type="checkbox" id="symptomVomiting">
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn-predict">
+                                    <span>⚡</span> Run Diagnostics
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Result side -->
+                    <div class="result-card" id="resultCard">
+                        <div class="result-placeholder" id="resultPlaceholder">
+                            <div class="placeholder-icon">🧠</div>
+                            <h3>Ready to Scan</h3>
+                            <p style="color: var(--text-secondary); max-width: 250px; font-size: 13px;">Fill in the patient's name, select symptoms, and click "Run Diagnostics" to see results.</p>
+                        </div>
+                        
+                        <!-- Loading spinner -->
+                        <div class="result-placeholder hidden" id="resultLoading">
+                            <div class="spinner"></div>
+                            <h3>Analyzing Symptom Vector</h3>
+                            <p style="color: var(--text-secondary); font-size: 13px;">Running classifier model inference...</p>
+                        </div>
+
+                        <!-- Actual results -->
+                        <div class="result-details hidden" id="resultDetails">
+                            <div class="result-badge">Scan Diagnostic Complete</div>
+                            <h5 style="color: var(--text-secondary); margin-bottom: 6px; font-size: 13px;">Predicted Condition</h5>
+                            <h1 class="result-disease" id="resultDisease">Covid-19</h1>
+                            
+                            <div class="result-confidence-container">
+                                <span class="confidence-value" id="resultConfidenceVal">0%</span>
+                                <div class="confidence-bar-bg">
+                                    <div class="confidence-bar-fill" id="resultConfidenceBar"></div>
+                                </div>
+                                <span style="font-size: 12px; color: var(--text-secondary);">Model Inference Probability</span>
+                            </div>
+
+                            <div class="result-meta">
+                                <div class="meta-item">
+                                    <span>Patient</span>
+                                    <strong id="resultPatientName">-</strong>
+                                </div>
+                                <div class="meta-item">
+                                    <span>Symptom Count</span>
+                                    <strong id="resultSymptomCount">0 / 5</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- HISTORY TAB -->
+            <section id="historyTab" class="tab-pane">
+                <div class="page-title">Prediction Database</div>
+                <div class="page-subtitle">Browse and filter historical disease prediction records.</div>
+
+                <div class="content-card">
+                    <div class="table-header-row">
+                        <div class="search-wrapper">
+                            <span class="search-icon">🔍</span>
+                            <input type="text" id="historySearch" class="search-input" placeholder="Search patient names..." oninput="filterHistoryTable()">
+                        </div>
+                        <div style="font-size: 13px; color: var(--text-secondary);" id="historyRecordCount">
+                            Showing 0 records
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="history-table">
+                            <thead>
+                                <tr>
+                                    <th>Patient Name</th>
+                                    <th>Diagnosed Disease</th>
+                                    <th>Confidence Rating</th>
+                                    <th>Record ID</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historyTableBody">
+                                <!-- Populated by JS -->
+                                <tr>
+                                    <td colspan="4" style="text-align: center; color: var(--text-secondary); padding: 40px 0;">Loading history...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

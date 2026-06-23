@@ -1,0 +1,13 @@
+fever,cough,headache,fatigue,vomiting,disease
+1,1,1,1,0,Flu
+1,1,0,1,0,Cold
+1,0,1,1,1,Dengue
+1,0,1,1,0,Malaria
+0,1,0,0,0,Cold
+1,1,1,0,0,Covid
+1,0,0,1,1,Typhoid
+0,0,1,1,0,Migraine
+1,1,1,1,1,Covid
+1,0,1,0,1,Dengue
+0,1,0,1,0,Cold
+1,1,0,1,1,Typhoid
