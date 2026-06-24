@@ -1,8 +1,26 @@
+# Python Virtual Environments
 venv/
-__pycache__/
-*.pyc
-.env
+.venv/
+env/
+ENV/
 backend/venv/
-backend/__pycache__/
-backend/routes/__pycache__/
-backend/utils/__pycache__/
+
+# Python Cache & Bytecode
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.pyd
+
+# Local Database Stores (Offline Fallbacks)
+backend/users_db.json
+backend/predictions_db.json
+
+# Environment Configuration
+.env
+
+# Editor & System Metadata
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.log

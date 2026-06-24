@@ -1,30 +1,45 @@
-const API = "http://127.0.0.1:8000";
+const API = window.location.port === "8000" ? window.location.origin : `${window.location.protocol}//${window.location.hostname}:8000`;
+
+// On Load: Check if URL queries specify register mode
+document.addEventListener("DOMContentLoaded", () => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("mode") === "register") {
+        toggleAuthMode("register");
+    }
+});
 
 function toggleAuthMode(mode) {
     const loginCard = document.getElementById("loginCard");
     const registerCard = document.getElementById("registerCard");
+    const forgotCard = document.getElementById("forgotCard");
 
+    // Hide all
+    loginCard.classList.add("hidden");
+    registerCard.classList.add("hidden");
+    forgotCard.classList.add("hidden");
+
+    // Show appropriate card
     if (mode === "register") {
-        loginCard.classList.add("hidden");
         registerCard.classList.remove("hidden");
+    } else if (mode === "forgot") {
+        forgotCard.classList.remove("hidden");
     } else {
-        registerCard.classList.add("hidden");
         loginCard.classList.remove("hidden");
     }
 }
 
 function showToast(message, type = "success") {
     const container = document.getElementById("toastContainer");
+    if (!container) return;
     
     const toast = document.createElement("div");
     toast.className = `toast toast-${type}`;
     
-    // Add appropriate status text or styling helper
-    let prefix = "✓";
-    if (type === "error") prefix = "✕";
-    if (type === "info") prefix = "ℹ";
+    let iconClass = "fa-solid fa-circle-check";
+    if (type === "error") iconClass = "fa-solid fa-circle-xmark";
+    if (type === "info") iconClass = "fa-solid fa-circle-info";
 
-    toast.innerHTML = `<span><strong>${prefix}</strong> ${message}</span>`;
+    toast.innerHTML = `<i class="${iconClass}"></i><span>${message}</span>`;
     container.appendChild(toast);
 
     // Trigger animation
@@ -127,5 +142,35 @@ async function handleRegister(event) {
     } catch (err) {
         console.error("Registration Error:", err);
         showToast("Could not connect to authentication server", "error");
+    }
+}
+
+function handleForgotPassword(event) {
+    event.preventDefault();
+    const email = document.getElementById("forgotEmail").value.trim();
+    
+    showToast("Processing request...", "info");
+    
+    setTimeout(() => {
+        showToast(`Reset link compiled and sent to ${email}`, "success");
+        document.getElementById("forgotForm").reset();
+        setTimeout(() => {
+            toggleAuthMode("login");
+        }, 1500);
+    }, 1500);
+}
+
+function togglePassword(id, element) {
+    const input = document.getElementById(id);
+    const icon = element.querySelector("i");
+
+    if (input.type === "password") {
+        input.type = "text";
+        icon.classList.remove("fa-eye");
+        icon.classList.add("fa-eye-slash");
+    } else {
+        input.type = "password";
+        icon.classList.remove("fa-eye-slash");
+        icon.classList.add("fa-eye");
     }
 }

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediPredict AI - Your Personal Health Companion</title>
+    <link rel="stylesheet" href="css/landing.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        // Set Theme instantly to light mode for the main page
+        document.documentElement.setAttribute("data-theme", "light");
+    </script>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <div class="logo-icon"><i class="fa-solid fa-heart-pulse"></i></div>
+                <span>MediPredict AI</span>
+            </div>
+            <nav class="nav-menu">
+                <a href="#how-it-works">How It Works</a>
+                <a href="#disease-awareness">Diseases</a>
+                <a href="#health-tips">Health Tips</a>
+                <a href="#faq">FAQ</a>
+            </nav>
+            <div class="nav-cta">
+                <a href="login.html" class="btn-outline">Sign In</a>
+                <a href="login.html?mode=register" class="btn-primary">Get Started</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <span class="hero-badge"><i class="fa-solid fa-sparkles"></i> AI-Powered Patient Health Assistant</span>
+                <h1>Understand Your Symptoms. <span class="text-highlight">Take Control of Your Health.</span></h1>
+                <p>An intelligent, patient-friendly AI health companion that helps you understand symptoms, predict potential conditions, and provides clear recovery checklists, water tracking, and wellness guidance.</p>
+                <div class="hero-actions">
+                    <a href="dashboard.html" class="btn-primary btn-lg">Check Symptoms Now <i class="fa-solid fa-arrow-right"></i></a>
+                    <a href="#how-it-works" class="btn-secondary btn-lg">Learn How It Works</a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <strong>10+</strong>
+                        <span>Common Conditions Analyzed</span>
+                    </div>
+                    <div class="stat-item">
+                        <strong>20+</strong>
+                        <span>Monitored Symptoms</span>
+                    </div>
+                    <div class="stat-item">
+                        <strong>100%</strong>
+                        <span>Patient Focused & Secure</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <!-- Glowing blob visual representational card -->
+                <div class="hero-glass-card">
+                    <div class="card-header">
+                        <div class="user-info">
+                            <div class="avatar"><i class="fa-solid fa-user"></i></div>
+                            <div>
+                                <h4>Active Checkup</h4>
+                                <p>Symptom analysis in progress...</p>
+                            </div>
+                        </div>
+                        <span class="pulse-dot"></span>
+                    </div>
+                    <div class="card-body">
+                        <div class="symptom-tag-list">
+                            <span class="tag"><i class="fa-solid fa-check text-primary"></i> Fever</span>
+                            <span class="tag"><i class="fa-solid fa-check text-primary"></i> Cough</span>
+                            <span class="tag"><i class="fa-solid fa-check text-primary"></i> Fatigue</span>
+                        </div>
+                        <div class="loading-bar">
+                            <div class="bar-fill"></div>
+                        </div>
+                        <div class="prediction-box">
+                            <span>Predicted Condition:</span>
+                            <strong>Influenza (Flu)</strong>
+                            <div class="confidence">Confidence Score: <span class="badge-success">88%</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="section bg-light">
+        <div class="container text-center">
+            <h2 class="section-title">How MediPredict AI Works</h2>
+            <p class="section-subtitle">Get medically guided insights and recovery assistance in three simple steps.</p>
+            
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-icon"><i class="fa-solid fa-magnifying-glass-lazy"></i></div>
+                    <h3>1. Input Symptoms</h3>
+                    <p>Select your symptoms from our easy-to-use checklist. Tell us your medical vitals like temperature, blood pressure, and heart rate.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-icon"><i class="fa-solid fa-microscope"></i></div>
+                    <h3>2. Instant Prediction</h3>
+                    <p>Our machine learning engine analyzes your symptom profile and compares it against clinical profiles to predict the most likely disease.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-icon"><i class="fa-solid fa-clipboard-check"></i></div>
+                    <h3>3. Get Recovery Plan</h3>
+                    <p>Receive immediate dietary advice, hydration plans, sleep metrics, and set up your active recovery assistant checklists.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Disease Awareness Cards Section -->
+    <section id="disease-awareness" class="section">
+        <div class="container">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">Understand Common Diseases</h2>
+                    <p class="section-subtitle">Learn about common illnesses, their symptoms, and prevention tips.</p>
+                </div>
+                <a href="dashboard.html" class="btn-outline">Open Knowledge Center</a>
+            </div>
+            
+            <div class="disease-grid">
+                <div class="disease-card">
+                    <div class="card-icon"><i class="fa-solid fa-virus-covid"></i></div>
+                    <h3>COVID-19</h3>
+                    <p>A viral respiratory disease causing fever, dry cough, sore throat, and loss of taste or smell.</p>
+                    <span class="risk-level risk-high">High Risk</span>
+                </div>
+                <div class="disease-card">
+                    <div class="card-icon"><i class="fa-solid fa-virus"></i></div>
+                    <h3>Influenza (Flu)</h3>
+                    <p>A highly contagious seasonal infection causing high fever, chills, severe muscle aches, and fatigue.</p>
+                    <span class="risk-level risk-medium">Medium Risk</span>
+                </div>
+                <div class="disease-card">
+                    <div class="card-icon"><i class="fa-solid fa-sun-plant-wilt"></i></div>
+                    <h3>Dengue Fever</h3>
+                    <p>A tropical mosquito-borne disease causing high fever, severe headache, behind-the-eye pain, and joint pain.</p>
+                    <span class="risk-level risk-critical">Critical Risk</span>
+                </div>
+                <div class="disease-card">
+                    <div class="card-icon"><i class="fa-solid fa-head-side-virus"></i></div>
+                    <h3>Migraine</h3>
+                    <p>A chronic neurological condition causing intense throbbing headache, light sensitivity, and nausea.</p>
+                    <span class="risk-level risk-low">Low Risk</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Health Tips Section -->
+    <section id="health-tips" class="section bg-light">
+        <div class="container">
+            <h2 class="section-title text-center">Daily Health Tips for Wellness</h2>
+            <p class="section-subtitle text-center">Simple, actionable wellness guidelines to maintain daily body health.</p>
+            
+            <div class="tips-grid">
+                <div class="tip-card">
+                    <div class="tip-image"><i class="fa-solid fa-droplet"></i></div>
+                    <div class="tip-content">
+                        <h3>Stay Hydrated</h3>
+                        <p>Aim for 2.5 to 3 liters of water daily. Hydration keeps mucous membranes moist, flushes out pathogens, and maintains blood volume.</p>
+                    </div>
+                </div>
+                <div class="tip-card">
+                    <div class="tip-image"><i class="fa-solid fa-bed"></i></div>
+                    <div class="tip-content">
+                        <h3>Prioritize Sleep</h3>
+                        <p>Get 7 to 9 hours of quality sleep. During sleep, your immune system releases cytokines, which are essential to fight infections.</p>
+                    </div>
+                </div>
+                <div class="tip-card">
+                    <div class="tip-image"><i class="fa-solid fa-apple-whole"></i></div>
+                    <div class="tip-content">
+                        <h3>Anti-Inflammatory Diet</h3>
+                        <p>Eat fresh fruits, ginger, garlic, and turmeric. Avoid high-sugar, oily foods that elevate systemic inflammation levels.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title text-center">Loved by Patients Everywhere</h2>
+            <p class="section-subtitle text-center">Read feedback from patients who used MediPredict AI to understand their health symptoms.</p>
+            
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <p class="quote">"This app helped me identify that my high fever and body aches were likely Flu. The hydration goals and recovery checklists kept me tracking my health every single day."</p>
+                    <div class="user">
+                        <div class="user-avatar">S</div>
+                        <div>
+                            <h4>Sarah Jenkins</h4>
+                            <p>Recovered Flu Patient</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <p class="quote">"I love the clean interface. As a patient, it is extremely calming. Searching symptoms is super fast, and the recovery checklist reminders are incredibly helpful."</p>
+                    <div class="user">
+                        <div class="user-avatar">M</div>
+                        <div>
+                            <h4>Mark Robinson</h4>
+                            <p>Allergy sufferer</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="section bg-light">
+        <div class="container max-width-md">
+            <h2 class="section-title text-center">Frequently Asked Questions</h2>
+            <p class="section-subtitle text-center">Common questions regarding symptoms predictions and safety.</p>
+            
+            <div class="faq-list">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Is MediPredict AI a substitute for real doctors?</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>No. MediPredict AI is an educational assistant designed to help patients understand symptom patterns. It is not a clinical diagnosis. Always consult a certified healthcare professional for medical diagnoses and treatment plans.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>How accurate is the symptom prediction?</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Our machine learning classifier is trained on symptom-disease patterns. While highly accurate in analyzing data matching the symptom profiles, it is intended for educational guidance only.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Is my health data secure?</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes. Your diagnostic histories are stored securely in a dedicated MongoDB Atlas cluster and are only accessible through your private practitioner/user token credentials.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-brand">
+                <div class="logo">
+                    <div class="logo-icon"><i class="fa-solid fa-heart-pulse"></i></div>
+                    <span>MediPredict AI</span>
+                </div>
+                <p>Empowering patients to understand their health with trustworthy AI diagnostics.</p>
+            </div>
+            <div class="footer-links">
+                <p>&copy; 2026 MediPredict AI. All rights reserved. Educational wellness application.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // FAQ Accordion Toggle Logic
+        document.querySelectorAll(".faq-question").forEach(item => {
+            item.addEventListener("click", () => {
+                const parent = item.parentElement;
+                const wasActive = parent.classList.contains("active");
+                
+                document.querySelectorAll(".faq-item").forEach(el => el.classList.remove("active"));
+                
+                if (!wasActive) {
+                    parent.classList.add("active");
+                }
+            });
+        });
+    </script>
+</body>
+</html>

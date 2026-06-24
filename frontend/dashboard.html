@@ -3,283 +3,521 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MediPredict AI - Dashboard</title>
+    <title>MediPredict AI - Patient Health Portal</title>
     <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Hide body by default to prevent unauthorized access and FOUC */
+        body { display: none !important; }
+    </style>
+    <script>
+        // Force light mode theme base
+        document.documentElement.setAttribute("data-theme", "light");
+
+        // Secure Instant Session Verification
+        (function() {
+            const token = localStorage.getItem("token");
+            const user = localStorage.getItem("user");
+            if (!token || !user) {
+                window.location.href = "login.html";
+                return;
+            }
+            
+            // Client-side JWT expiration check
+            try {
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const payload = JSON.parse(window.atob(base64));
+                if (payload.exp && Date.now() >= payload.exp * 1000) {
+                    localStorage.clear();
+                    window.location.href = "login.html";
+                }
+            } catch (e) {
+                localStorage.clear();
+                window.location.href = "login.html";
+            }
+        })();
+    </script>
 </head>
 <body>
 
-    <div class="toast-container" id="toastContainer"></div>
-
-    <!-- Sidebar Navigation -->
+    <!-- Dark Navigation Sidebar (Mixed Theme Accent) -->
     <aside class="sidebar">
         <div class="sidebar-logo">
-            <div class="logo-badge">M</div>
+            <div class="logo-badge">
+                <i class="fa-solid fa-heart-pulse"></i>
+            </div>
             <span>MediPredict AI</span>
         </div>
 
         <nav class="nav-links">
-            <div class="nav-item active" onclick="switchTab('overview', this)">
-                <span>📊</span> Overview
-            </div>
-            <div class="nav-item" onclick="switchTab('predict', this)">
-                <span>🧠</span> New Prediction
-            </div>
-            <div class="nav-item" onclick="switchTab('history', this)">
-                <span>🕒</span> Scan History
-            </div>
+            <span class="nav-section-title">Wellness Portal</span>
+            <a class="nav-item active" onclick="switchTab('dashboardTab', this)">
+                <i class="fa-solid fa-house-chimney-medical"></i>
+                <span>User Dashboard</span>
+            </a>
+            <a class="nav-item" onclick="switchTab('checkerTab', this)">
+                <i class="fa-solid fa-hand-holding-hand"></i>
+                <span>Symptom Checker</span>
+            </a>
+            <a class="nav-item" onclick="switchTab('recoveryTab', this)">
+                <i class="fa-solid fa-kit-medical"></i>
+                <span>Recovery Assistant</span>
+            </a>
+            <a class="nav-item" onclick="switchTab('knowledgeTab', this)">
+                <i class="fa-solid fa-book-medical"></i>
+                <span>Disease Center</span>
+            </a>
+            <a class="nav-item" id="navProfileTab" onclick="switchTab('profileTab', this)">
+                <i class="fa-solid fa-circle-user"></i>
+                <span>User Profile</span>
+            </a>
         </nav>
 
         <div class="logout-section">
-            <div class="btn-logout" onclick="logout()">
-                <span>🚪</span> Sign Out
-            </div>
+            <a class="btn-logout" onclick="handleLogout()">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                <span>Sign Out</span>
+            </a>
         </div>
     </aside>
 
-    <!-- Main Content Area -->
-    <main class="content-wrapper">
-        <!-- Top Sticky Header -->
+    <!-- Main Light Content Canvas -->
+    <div class="content-wrapper">
         <header class="main-header">
-            <div>
-                <h3 id="tabHeaderTitle">Dashboard</h3>
-            </div>
-            <div class="user-profile">
-                <div class="user-avatar" id="avatarLetter">U</div>
-                <div class="user-info">
-                    <h4 id="userNameDisplay">User Name</h4>
-                    <p>Medical Professional</p>
+            <h3 id="currentTabTitle">User Dashboard</h3>
+            <div class="header-actions">
+                <div class="user-profile">
+                    <div class="user-avatar" id="avatarLetter">U</div>
+                    <div class="user-info">
+                        <h4 id="userNameDisplay">Patient User</h4>
+                        <p>General Account</p>
+                    </div>
                 </div>
             </div>
         </header>
 
-        <!-- Dynamic Container -->
-        <div class="container">
-            
-            <!-- OVERVIEW TAB -->
-            <section id="overviewTab" class="tab-pane active">
-                <div class="page-title">System Status</div>
-                <div class="page-subtitle">Real-time statistics of predictions and clinical scans.</div>
+        <main class="container">
+            <!-- Toast Notifications Container -->
+            <div class="toast-container" id="toastContainer"></div>
 
+            <!-- TAB 1: USER DASHBOARD -->
+            <div class="tab-pane active" id="dashboardTab">
+                <!-- Welcome Card -->
+                <div class="content-card welcome-card">
+                    <div class="welcome-text">
+                        <h1>Hello, <span class="patient-name-placeholder">User</span>!</h1>
+                        <p>How are you feeling today? Check your symptoms and monitor your daily recovery metrics below.</p>
+                        <button class="btn-primary" style="margin-top: 16px;" onclick="document.querySelector('[onclick*=\'checkerTab\']').click()">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Run Symptom Check
+                        </button>
+                    </div>
+                    <div class="welcome-score-circle">
+                        <div class="score-value" id="dashboardHealthScore">92</div>
+                        <span class="score-label">Health Score</span>
+                    </div>
+                </div>
+
+                <!-- Stats Summary Widgets -->
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <div class="stat-icon icon-blue">👤</div>
-                        <div class="stat-details">
-                            <h3>Total Patients</h3>
-                            <h2 id="statPatients">0</h2>
+                        <div class="stat-header">
+                            <span class="stat-title">Recent Checks Count</span>
+                            <div class="stat-icon primary"><i class="fa-solid fa-history"></i></div>
                         </div>
+                        <div class="stat-value" id="statChecksCount">0</div>
+                        <div class="stat-change up"><i class="fa-solid fa-check"></i><span>History fully logged</span></div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon icon-cyan">⚡</div>
-                        <div class="stat-details">
-                            <h3>Predictions Run</h3>
-                            <h2 id="statPredictions">0</h2>
+                        <div class="stat-header">
+                            <span class="stat-title">Water Target Progress</span>
+                            <div class="stat-icon info"><i class="fa-solid fa-glass-water"></i></div>
                         </div>
+                        <div class="stat-value" id="statWaterProgress">0 / 8 cups</div>
+                        <div class="stat-change up"><i class="fa-solid fa-droplet"></i><span id="statWaterPct">0% target reached</span></div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon icon-green">🎯</div>
-                        <div class="stat-details">
-                            <h3>Model Accuracy</h3>
-                            <h2>96.4%</h2>
+                        <div class="stat-header">
+                            <span class="stat-title">Daily Recovery Tasks</span>
+                            <div class="stat-icon success"><i class="fa-solid fa-list-check"></i></div>
                         </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon icon-purple">🦠</div>
-                        <div class="stat-details">
-                            <h3>Diseases Indexed</h3>
-                            <h2 id="statDiseases">7</h2>
-                        </div>
+                        <div class="stat-value" id="statTasksCount">0 / 4 done</div>
+                        <div class="stat-change up"><i class="fa-solid fa-circle-check"></i><span id="statTasksPct">0% done</span></div>
                     </div>
                 </div>
 
-                <div class="dashboard-row">
+                <!-- History list and health insights grid -->
+                <div class="overview-grid">
                     <div class="content-card">
-                        <div class="card-title">
-                            <span>System Overview</span>
-                            <span style="font-size: 12px; color: var(--accent-green);">● Operational</span>
+                        <h4 class="form-section-title"><i class="fa-solid fa-clock-rotate-left"></i> Recent Health Checks</h4>
+                        <div class="table-container">
+                            <table class="premium-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Predicted Condition</th>
+                                        <th>Confidence</th>
+                                        <th>Risk Level</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dashboardChecksHistory">
+                                    <!-- Dynamic rows loaded here -->
+                                </tbody>
+                            </table>
                         </div>
-                        <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 16px;">
-                            MediPredict AI utilizes a Random Forest Classifier trained on verified clinical symptom vectors. It analyzes user-reported symptom sets to output the most probable diagnosis along with a calculated confidence rating.
-                        </p>
-                        <p style="color: var(--text-secondary); line-height: 1.6;">
-                            This dashboard interface allows medical professionals to run instant diagnostics and review historical scans seamlessly.
-                        </p>
                     </div>
 
                     <div class="content-card">
-                        <div class="card-title">Recent Scans</div>
-                        <div class="recent-list" id="recentPredictionsList">
-                            <!-- Populated by JS -->
-                            <p style="color: var(--text-secondary); font-size: 13px; text-align: center;">No scans run yet.</p>
+                        <h4 class="form-section-title"><i class="fa-solid fa-heart-circle-check"></i> Personalized Health Insights</h4>
+                        <div class="insights-container" id="dashboardInsightsList">
+                            <!-- Dynamic Insights -->
+                            <div class="insight-item">
+                                <div class="insight-icon"><i class="fa-solid fa-circle-info"></i></div>
+                                <div class="insight-text">
+                                    <h5>Check symptoms often</h5>
+                                    <p>Run regular checkups if you experience changes in body temperature or respiration.</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </section>
+            </div>
 
-            <!-- PREDICT TAB -->
-            <section id="predictTab" class="tab-pane">
-                <div class="page-title">Disease Predictor</div>
-                <div class="page-subtitle">Input symptoms to run a diagnostic classification scan.</div>
+            <!-- TAB 2: SYMPTOM CHECKER -->
+            <div class="tab-pane" id="checkerTab">
+                <div class="page-title-row">
+                    <h1 class="page-title">AI Symptom Checker</h1>
+                    <p class="page-subtitle">Select symptoms, input medical vitals, and predict possible conditions.</p>
+                </div>
 
                 <div class="predict-layout">
-                    <!-- Form side -->
+                    <!-- Symptom checker form -->
                     <div class="content-card">
-                        <form id="predictionForm" onsubmit="runPrediction(event)">
-                            <div class="form-section">
-                                <div class="form-group">
-                                    <label for="patientName">Patient Name</label>
-                                    <input type="text" id="patientName" class="form-input" placeholder="Enter patient name" required>
-                                </div>
-
-                                <div>
-                                    <div class="symptoms-title">Select Present Symptoms</div>
-                                    
-                                    <div class="symptom-toggle-row">
-                                        <div class="symptom-info">
-                                            <h5>Fever</h5>
-                                            <p>Elevated body temperature above 37.8°C</p>
-                                        </div>
-                                        <label class="switch">
-                                            <input type="checkbox" id="symptomFever">
-                                            <span class="slider"></span>
-                                        </label>
-                                    </div>
-
-                                    <div class="symptom-toggle-row">
-                                        <div class="symptom-info">
-                                            <h5>Cough</h5>
-                                            <p>Persistent dry or productive cough</p>
-                                        </div>
-                                        <label class="switch">
-                                            <input type="checkbox" id="symptomCough">
-                                            <span class="slider"></span>
-                                        </label>
-                                    </div>
-
-                                    <div class="symptom-toggle-row">
-                                        <div class="symptom-info">
-                                            <h5>Headache</h5>
-                                            <p>Severe head pain or migraine sensations</p>
-                                        </div>
-                                        <label class="switch">
-                                            <input type="checkbox" id="symptomHeadache">
-                                            <span class="slider"></span>
-                                        </label>
-                                    </div>
-
-                                    <div class="symptom-toggle-row">
-                                        <div class="symptom-info">
-                                            <h5>Fatigue</h5>
-                                            <p>Extreme tiredness or lack of energy</p>
-                                        </div>
-                                        <label class="switch">
-                                            <input type="checkbox" id="symptomFatigue">
-                                            <span class="slider"></span>
-                                        </label>
-                                    </div>
-
-                                    <div class="symptom-toggle-row">
-                                        <div class="symptom-info">
-                                            <h5>Vomiting</h5>
-                                            <p>Nausea accompanied by vomiting</p>
-                                        </div>
-                                        <label class="switch">
-                                            <input type="checkbox" id="symptomVomiting">
-                                            <span class="slider"></span>
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <button type="submit" class="btn-predict">
-                                    <span>⚡</span> Run Diagnostics
-                                </button>
+                        <form id="checkerForm" onsubmit="runSymptomPrediction(event)">
+                            
+                            <!-- Searchable input box -->
+                            <h4 class="form-section-title"><i class="fa-solid fa-magnifying-glass"></i> Select Symptoms</h4>
+                            <div class="search-wrapper" style="max-width: 100%; margin-bottom: 20px;">
+                                <i class="fa-solid fa-search search-icon"></i>
+                                <input type="text" class="search-input" id="symptomSearchInput" oninput="filterSymptomChips()" placeholder="Type to search symptoms...">
                             </div>
+
+                            <!-- Symptom chips categorization -->
+                            <div class="symptom-category-title">General Symptoms</div>
+                            <div class="symptom-chips-container" id="chipsGeneral">
+                                <!-- Chips will be populated here -->
+                            </div>
+
+                            <div class="symptom-category-title" style="margin-top: 16px;">Respiratory & Throat</div>
+                            <div class="symptom-chips-container" id="chipsRespiratory">
+                                <!-- Chips populated here -->
+                            </div>
+
+                            <div class="symptom-category-title" style="margin-top: 16px;">Systemic & Gastrointestinal</div>
+                            <div class="symptom-chips-container" id="chipsDigestive">
+                                <!-- Chips populated here -->
+                            </div>
+
+                            <!-- Patient Vitals section -->
+                            <h4 class="form-section-title" style="margin-top: 32px;"><i class="fa-solid fa-heart-pulse"></i> Patient Vitals (Optional)</h4>
+                            <div class="form-grid-2">
+                                <div class="form-group">
+                                    <label for="checkerTemp">Temperature (°C)</label>
+                                    <input type="number" step="0.1" id="checkerTemp" class="form-input" value="36.8">
+                                </div>
+                                <div class="form-group">
+                                    <label for="checkerHR">Heart Rate (BPM)</label>
+                                    <input type="number" id="checkerHR" class="form-input" value="72">
+                                </div>
+                            </div>
+                            <div class="form-grid-2">
+                                <div class="form-group">
+                                    <label for="checkerBP">Blood Pressure (Sys / Dia)</label>
+                                    <div style="display: flex; gap: 8px;">
+                                        <input type="number" id="checkerBPSys" class="form-input" value="120">
+                                        <input type="number" id="checkerBPDia" class="form-input" value="80">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="checkerSpO2">Oxygen Saturation (SpO2 %)</label>
+                                    <input type="number" id="checkerSpO2" class="form-input" value="98" min="50" max="100">
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn-predict" style="margin-top: 24px;">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                <span>Check Symptoms Now</span>
+                            </button>
                         </form>
                     </div>
 
-                    <!-- Result side -->
-                    <div class="result-card" id="resultCard">
-                        <div class="result-placeholder" id="resultPlaceholder">
-                            <div class="placeholder-icon">🧠</div>
-                            <h3>Ready to Scan</h3>
-                            <p style="color: var(--text-secondary); max-width: 250px; font-size: 13px;">Fill in the patient's name, select symptoms, and click "Run Diagnostics" to see results.</p>
-                        </div>
-                        
-                        <!-- Loading spinner -->
-                        <div class="result-placeholder hidden" id="resultLoading">
-                            <div class="spinner"></div>
-                            <h3>Analyzing Symptom Vector</h3>
-                            <p style="color: var(--text-secondary); font-size: 13px;">Running classifier model inference...</p>
+                    <!-- Disease Prediction Results Panel -->
+                    <div class="result-card" id="checkerResultPanel">
+                        <div class="result-placeholder" id="checkerPlaceholder">
+                            <i class="fa-solid fa-heart-pulse placeholder-icon"></i>
+                            <h3>Awaiting Analysis</h3>
+                            <p style="color: var(--text-secondary); font-size: 13px; max-width: 260px; margin-top: 8px;">
+                                Select symptoms above and enter vitals, then run the checker to see prediction outcomes.
+                            </p>
                         </div>
 
-                        <!-- Actual results -->
-                        <div class="result-details hidden" id="resultDetails">
-                            <div class="result-badge">Scan Diagnostic Complete</div>
-                            <h5 style="color: var(--text-secondary); margin-bottom: 6px; font-size: 13px;">Predicted Condition</h5>
-                            <h1 class="result-disease" id="resultDisease">Covid-19</h1>
+                        <!-- Full Disease Outcome Display -->
+                        <div class="result-details hidden" id="checkerResultContent" style="text-align: left; width: 100%;">
+                            <span class="result-header-badge">AI Clinical Prediction</span>
+                            <h2 class="result-disease-name" id="outDiseaseName">Influenza</h2>
                             
-                            <div class="result-confidence-container">
-                                <span class="confidence-value" id="resultConfidenceVal">0%</span>
-                                <div class="confidence-bar-bg">
-                                    <div class="confidence-bar-fill" id="resultConfidenceBar"></div>
-                                </div>
-                                <span style="font-size: 12px; color: var(--text-secondary);">Model Inference Probability</span>
+                            <div class="risk-indicator" id="outRiskBadge">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                                <span id="outRiskText">Medium Risk</span>
                             </div>
 
-                            <div class="result-meta">
-                                <div class="meta-item">
-                                    <span>Patient</span>
-                                    <strong id="resultPatientName">-</strong>
+                            <div class="gauge-container" style="align-items: flex-start;">
+                                <span style="font-size: 12px; color: var(--text-secondary); font-weight: 600; margin-bottom: 6px;">AI Confidence Score</span>
+                                <div class="gauge-bar-bg" style="width: 100%;">
+                                    <div class="gauge-bar-fill" id="outGaugeFill"></div>
                                 </div>
-                                <div class="meta-item">
-                                    <span>Symptom Count</span>
-                                    <strong id="resultSymptomCount">0 / 5</strong>
+                                <span class="gauge-value" id="outConfidenceText">88%</span>
+                            </div>
+
+                            <div style="margin: 16px 0; font-size: 13px; line-height: 1.5;" id="outDescription">
+                                Disease description details.
+                            </div>
+
+                            <!-- Top 3 possible list -->
+                            <div style="margin-bottom: 16px;">
+                                <strong style="font-size: 12px; display: block; margin-bottom: 6px;">Top 3 Possible Matches:</strong>
+                                <div id="outTopMatchesList" style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                    <!-- Dynamic chips -->
                                 </div>
+                            </div>
+
+                            <!-- Recommendations columns -->
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px;">
+                                <div class="guidance-box" style="margin-top: 0; padding: 12px;">
+                                    <div class="guidance-title"><i class="fa-solid fa-utensils"></i> Foods to Eat</div>
+                                    <div class="guidance-text" style="font-size: 11px;" id="outFoodsEat"></div>
+                                </div>
+                                <div class="guidance-box" style="margin-top: 0; padding: 12px;">
+                                    <div class="guidance-title"><i class="fa-solid fa-ban"></i> Foods to Avoid</div>
+                                    <div class="guidance-text" style="font-size: 11px;" id="outFoodsAvoid"></div>
+                                </div>
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px;">
+                                <div class="guidance-box" style="margin-top: 0; padding: 12px;">
+                                    <div class="guidance-title"><i class="fa-solid fa-droplet"></i> Hydration</div>
+                                    <div class="guidance-text" style="font-size: 11px;" id="outHydration"></div>
+                                </div>
+                                <div class="guidance-box" style="margin-top: 0; padding: 12px;">
+                                    <div class="guidance-title"><i class="fa-solid fa-bed"></i> Sleep</div>
+                                    <div class="guidance-text" style="font-size: 11px;" id="outSleep"></div>
+                                </div>
+                            </div>
+
+                            <div class="guidance-box" style="margin-top: 12px;">
+                                <div class="guidance-title"><i class="fa-solid fa-stethoscope"></i> Recommended Actions</div>
+                                <div class="guidance-text" style="font-size: 12px;" id="outActions"></div>
+                            </div>
+
+                            <div class="result-actions">
+                                <button class="btn-export" onclick="exportPatientReportPDF()">
+                                    <i class="fa-solid fa-file-pdf"></i>
+                                    <span>Download PDF Report</span>
+                                </button>
+                                <button class="btn-primary" style="flex: 1;" onclick="startRecoveryChecklist()">
+                                    <i class="fa-solid fa-check-double"></i>
+                                    <span>Add to Recovery Assistant</span>
+                                </button>
                             </div>
                         </div>
                     </div>
                 </div>
-            </section>
+            </div>
 
-            <!-- HISTORY TAB -->
-            <section id="historyTab" class="tab-pane">
-                <div class="page-title">Prediction Database</div>
-                <div class="page-subtitle">Browse and filter historical disease prediction records.</div>
+            <!-- TAB 3: RECOVERY ASSISTANT -->
+            <div class="tab-pane" id="recoveryTab">
+                <div class="page-title-row">
+                    <h1 class="page-title">Recovery Assistant</h1>
+                    <p class="page-subtitle">Track your hydration progress, checklist completions, sleep metrics, and wellness scores.</p>
+                </div>
+
+                <div class="overview-grid">
+                    <!-- Daily Checklist & Water Tracking -->
+                    <div class="content-card">
+                        <h4 class="form-section-title"><i class="fa-solid fa-droplet"></i> Water Intake Tracker</h4>
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+                            <div>
+                                <h3 id="recoveryWaterDisplay">0 / 8 Cups</h3>
+                                <p style="font-size: 12px; color: var(--text-secondary);">Target: 2 Liters daily</p>
+                            </div>
+                            <div style="display: flex; gap: 8px;">
+                                <button class="btn-outline" style="padding: 10px;" onclick="addWaterCup(-1)"><i class="fa-solid fa-minus"></i></button>
+                                <button class="btn-primary" style="padding: 10px;" onclick="addWaterCup(1)"><i class="fa-solid fa-plus"></i> Drink Cup</button>
+                            </div>
+                        </div>
+
+                        <!-- Progress cup bar -->
+                        <div class="water-cups-row" id="waterCupsContainer" style="display: flex; gap: 12px; font-size: 24px; color: var(--text-muted); margin-bottom: 32px;">
+                            <i class="fa-solid fa-glass-water"></i>
+                            <i class="fa-solid fa-glass-water"></i>
+                            <i class="fa-solid fa-glass-water"></i>
+                            <i class="fa-solid fa-glass-water"></i>
+                            <i class="fa-solid fa-glass-water"></i>
+                            <i class="fa-solid fa-glass-water"></i>
+                            <i class="fa-solid fa-glass-water"></i>
+                            <i class="fa-solid fa-glass-water"></i>
+                        </div>
+
+                        <h4 class="form-section-title"><i class="fa-solid fa-list-check"></i> Daily Recovery Checklist</h4>
+                        <div style="display: flex; flex-direction: column; gap: 12px;">
+                            <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--bg-secondary); border-radius: 10px; cursor: pointer;">
+                                <input type="checkbox" id="chkMeds" onchange="updateRecoveryProgress()">
+                                <span>Take scheduled medications</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--bg-secondary); border-radius: 10px; cursor: pointer;">
+                                <input type="checkbox" id="chkHydrate" onchange="updateRecoveryProgress()">
+                                <span>Complete water intake goal</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--bg-secondary); border-radius: 10px; cursor: pointer;">
+                                <input type="checkbox" id="chkRest" onchange="updateRecoveryProgress()">
+                                <span>Complete recommended daily sleep</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--bg-secondary); border-radius: 10px; cursor: pointer;">
+                                <input type="checkbox" id="chkLightMeals" onchange="updateRecoveryProgress()">
+                                <span>Eat recommended healthy meals</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Sleep & Health Improvement Trackers -->
+                    <div class="content-card">
+                        <h4 class="form-section-title"><i class="fa-solid fa-bed"></i> Sleep Tracker</h4>
+                        <div style="display: flex; gap: 12px; align-items: flex-end; margin-bottom: 24px;">
+                            <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                                <label for="sleepHoursInput">Sleep Duration (Hours)</label>
+                                <input type="number" step="0.5" id="sleepHoursInput" class="form-input" value="8" min="0" max="24">
+                            </div>
+                            <button class="btn-primary" style="height: 42px;" onclick="logSleepHours()">Log Hours</button>
+                        </div>
+                        <div style="height: 180px; position: relative;">
+                            <canvas id="sleepChart"></canvas>
+                        </div>
+
+                        <h4 class="form-section-title" style="margin-top: 32px;"><i class="fa-solid fa-chart-line"></i> Health Improvement Tracker</h4>
+                        <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 12px;">Based on your symptoms checklists history over the last 7 days:</p>
+                        <div style="height: 180px; position: relative;">
+                            <canvas id="recoveryProgressChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: DISEASE KNOWLEDGE CENTER -->
+            <div class="tab-pane" id="knowledgeTab">
+                <div class="page-title-row">
+                    <h1 class="page-title">Disease Knowledge Center</h1>
+                    <p class="page-subtitle">Search, read, and understand common diseases, their symptoms, and prevention tips.</p>
+                </div>
 
                 <div class="content-card">
-                    <div class="table-header-row">
-                        <div class="search-wrapper">
-                            <span class="search-icon">🔍</span>
-                            <input type="text" id="historySearch" class="search-input" placeholder="Search patient names..." oninput="filterHistoryTable()">
-                        </div>
-                        <div style="font-size: 13px; color: var(--text-secondary);" id="historyRecordCount">
-                            Showing 0 records
-                        </div>
+                    <!-- Search input -->
+                    <div class="search-wrapper" style="max-width: 100%; margin-bottom: 24px;">
+                        <i class="fa-solid fa-search search-icon"></i>
+                        <input type="text" class="search-input" id="knowledgeSearchInput" oninput="filterKnowledgeBase()" placeholder="Search illnesses (e.g. Covid, Flu, Dengue)...">
                     </div>
 
-                    <div class="table-container">
-                        <table class="history-table">
-                            <thead>
-                                <tr>
-                                    <th>Patient Name</th>
-                                    <th>Diagnosed Disease</th>
-                                    <th>Confidence Rating</th>
-                                    <th>Record ID</th>
-                                </tr>
-                            </thead>
-                            <tbody id="historyTableBody">
-                                <!-- Populated by JS -->
-                                <tr>
-                                    <td colspan="4" style="text-align: center; color: var(--text-secondary); padding: 40px 0;">Loading history...</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div style="display: grid; grid-template-columns: 280px 1fr; gap: 24px;" id="knowledgeContainer">
+                        <!-- List of diseases -->
+                        <div style="display: flex; flex-direction: column; gap: 8px; border-right: 1px solid var(--border-color); padding-right: 16px;" id="knowledgeListContainer">
+                            <!-- Dynamic items -->
+                        </div>
+
+                        <!-- Selected disease details -->
+                        <div id="knowledgeDetailContainer">
+                            <div class="empty-state" style="padding: 40px;">
+                                <i class="fa-solid fa-book-open empty-icon"></i>
+                                <h4 class="empty-title">Select an Illness</h4>
+                                <p class="empty-desc">Choose a disease from the list on the left to read clinical info details.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </section>
+            </div>
 
-        </div>
-    </main>
+            <!-- TAB 5: USER PROFILE -->
+            <div class="tab-pane" id="profileTab">
+                <div class="page-title-row">
+                    <h1 class="page-title">User Profile</h1>
+                    <p class="page-subtitle">Manage your personal metrics, body height, weight, and clinical allergies.</p>
+                </div>
 
+                <div class="overview-grid" style="grid-template-columns: 0.7fr 1.3fr;">
+                    <div class="content-card" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px;">
+                        <div class="user-avatar" style="width: 100px; height: 100px; font-size: 40px; margin-bottom: 20px; background-color: var(--primary); color: #ffffff;" id="profileAvatarLetter">U</div>
+                        <h2 id="profileNameDisplay" style="font-weight: 700; margin-bottom: 4px;">Patient User</h2>
+                        <span class="badge-pill badge-low" style="margin-bottom: 24px; background-color: var(--primary-light); color: var(--primary);">Active User</span>
+                        
+                        <div style="width: 100%; border-top: 1px solid var(--border-color); padding-top: 20px; text-align: left; font-size: 13px;">
+                            <div style="margin-bottom: 12px;"><strong>Age:</strong> <span style="float: right; color: var(--text-secondary);" id="profileAgeVal">25</span></div>
+                            <div style="margin-bottom: 12px;"><strong>Gender:</strong> <span style="float: right; color: var(--text-secondary);" id="profileGenderVal">Male</span></div>
+                            <div style="margin-bottom: 12px;"><strong>Height:</strong> <span style="float: right; color: var(--text-secondary);" id="profileHeightVal">175 cm</span></div>
+                            <div><strong>Weight:</strong> <span style="float: right; color: var(--text-secondary);" id="profileWeightVal">70 kg</span></div>
+                        </div>
+                    </div>
+
+                    <div class="content-card">
+                        <h4 class="form-section-title"><i class="fa-regular fa-edit"></i> Edit Personal Health Profile</h4>
+                        <form id="profileForm" onsubmit="savePatientProfile(event)">
+                            <div class="form-grid-2">
+                                <div class="form-group">
+                                    <label for="profileName">Full Name</label>
+                                    <input type="text" class="form-input" id="profileName" value="Patient User" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="profileAge">Age</label>
+                                    <input type="number" class="form-input" id="profileAge" value="25" required>
+                                </div>
+                            </div>
+                            <div class="form-grid-3">
+                                <div class="form-group">
+                                    <label for="profileGender">Gender</label>
+                                    <select class="form-input" id="profileGender" required>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="profileHeight">Height (cm)</label>
+                                    <input type="number" class="form-input" id="profileHeight" value="175" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="profileWeight">Weight (kg)</label>
+                                    <input type="number" class="form-input" id="profileWeight" value="70" required>
+                                </div>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 16px;">
+                                <label for="profileHistory">Chronic Medical History (comma separated)</label>
+                                <input type="text" class="form-input" id="profileHistory" placeholder="e.g. Hypertension, Asthma">
+                            </div>
+                            <div class="form-group" style="margin-bottom: 24px;">
+                                <label for="profileAllergies">Known Allergies (comma separated)</label>
+                                <input type="text" class="form-input" id="profileAllergies" placeholder="e.g. Peanuts, Penicillin">
+                            </div>
+                            <button type="submit" class="btn-predict">
+                                <i class="fa-regular fa-floppy-disk"></i>
+                                <span>Save Profile Metrics</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Script imports -->
     <script src="js/dashboard.js"></script>
 </body>
 </html>
