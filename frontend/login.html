@@ -13,10 +13,10 @@
         // Force light theme
         document.documentElement.setAttribute("data-theme", "light");
         
-        // Redirect to dashboard if session already exists
+        // Secure Instant Session Verification and auto-login
         (function() {
-            const token = localStorage.getItem("token");
-            const user = localStorage.getItem("user");
+            const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+            const user = localStorage.getItem("user") || sessionStorage.getItem("user");
             if (token && user) {
                 window.location.href = "dashboard.html";
             }
@@ -24,6 +24,19 @@
     </script>
 </head>
 <body>
+
+    <!-- Header Navigation -->
+    <header class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <div class="logo-icon"><i class="fa-solid fa-heart-pulse"></i></div>
+                <span style="font-weight: 800; font-size: 22px; letter-spacing: -0.5px;">MediPredict <span style="color: var(--primary);">AI</span></span>
+            </a>
+            <div class="nav-cta">
+                <a href="index.html" class="btn-outline">Back to Home</a>
+            </div>
+        </div>
+    </header>
 
     <!-- Ambient Subtle Blue Glow Blobs -->
     <div class="glow-blob blob-1"></div>
@@ -64,6 +77,12 @@
                             <i class="fa-regular fa-eye"></i>
                         </span>
                     </div>
+                </div>
+
+                <!-- Remember Me Checkbox -->
+                <div class="form-group" style="display: flex; flex-direction: row; align-items: center; gap: 8px; margin-bottom: 20px;">
+                    <input type="checkbox" id="loginRememberMe" style="width: 16px; height: 16px; cursor: pointer;">
+                    <label for="loginRememberMe" style="font-size: 13px; color: var(--text-secondary); cursor: pointer; margin-bottom: 0; user-select: none;">Remember me on this device</label>
                 </div>
 
                 <button type="submit" class="btn-primary">
@@ -113,6 +132,8 @@
                             <i class="fa-regular fa-eye"></i>
                         </span>
                     </div>
+                    <!-- Password strength indicator -->
+                    <div id="registerPasswordStrengthDisplay" style="font-size: 11px; margin-top: 6px; font-weight: 500;"></div>
                 </div>
 
                 <button type="submit" class="btn-primary">
@@ -133,7 +154,7 @@
                     <i class="fa-solid fa-key"></i>
                 </div>
                 <h1>Reset Password</h1>
-                <p>Enter your email address and we'll send you a password reset link.</p>
+                <p>Enter your email address and we'll send you a password reset code.</p>
             </div>
 
             <form id="forgotForm" onsubmit="handleForgotPassword(event)">
@@ -146,8 +167,59 @@
                 </div>
 
                 <button type="submit" class="btn-primary">
-                    <span>Send Reset Link</span>
+                    <span>Send Reset Code</span>
                     <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                Remember your password? <a href="#" onclick="toggleAuthMode('login')">Back to Sign In</a>
+            </div>
+        </div>
+
+        <!-- Reset Password Verification Card -->
+        <div class="auth-card fade-in hidden" id="resetCard">
+            <div class="brand">
+                <div class="brand-icon">
+                    <i class="fa-solid fa-lock-open"></i>
+                </div>
+                <h1>Enter New Password</h1>
+                <p>Input the verification code and set your new account password.</p>
+            </div>
+
+            <form id="resetForm" onsubmit="handleResetPassword(event)">
+                <div class="form-group">
+                    <label for="resetEmail">Email Address</label>
+                    <div class="input-wrapper">
+                        <i class="fa-regular fa-envelope input-icon"></i>
+                        <input type="email" id="resetEmail" placeholder="yourname@gmail.com" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="resetCode">Verification Code</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-key input-icon"></i>
+                        <input type="text" id="resetCode" placeholder="Enter reset code" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="resetPassword">New Password</label>
+                    <div class="input-wrapper password-wrapper">
+                        <i class="fa-solid fa-lock input-icon"></i>
+                        <input type="password" id="resetPassword" placeholder="••••••••" required>
+                        <span class="toggle-password" onclick="togglePassword('resetPassword', this)">
+                            <i class="fa-regular fa-eye"></i>
+                        </span>
+                    </div>
+                    <!-- Password strength indicator -->
+                    <div id="resetPasswordStrengthDisplay" style="font-size: 11px; margin-top: 6px; font-weight: 500;"></div>
+                </div>
+
+                <button type="submit" class="btn-primary">
+                    <span>Update Password</span>
+                    <i class="fa-solid fa-check"></i>
                 </button>
             </form>
 

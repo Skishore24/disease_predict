@@ -9,17 +9,17 @@
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* Hide body by default to prevent unauthorized access and FOUC */
+        /* Prevent unauthorized flash of content */
         body { display: none !important; }
     </style>
     <script>
-        // Force light mode theme base
+        // Force light theme configuration
         document.documentElement.setAttribute("data-theme", "light");
 
         // Secure Instant Session Verification
         (function() {
-            const token = localStorage.getItem("token");
-            const user = localStorage.getItem("user");
+            const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+            const user = localStorage.getItem("user") || sessionStorage.getItem("user");
             if (!token || !user) {
                 window.location.href = "login.html";
                 return;
@@ -32,10 +32,12 @@
                 const payload = JSON.parse(window.atob(base64));
                 if (payload.exp && Date.now() >= payload.exp * 1000) {
                     localStorage.clear();
+                    sessionStorage.clear();
                     window.location.href = "login.html";
                 }
             } catch (e) {
                 localStorage.clear();
+                sessionStorage.clear();
                 window.location.href = "login.html";
             }
         })();
@@ -43,7 +45,7 @@
 </head>
 <body>
 
-    <!-- Dark Navigation Sidebar (Mixed Theme Accent) -->
+    <!-- Dark Navigation Sidebar -->
     <aside class="sidebar">
         <div class="sidebar-logo">
             <div class="logo-badge">
@@ -73,7 +75,6 @@
             <a class="nav-item" id="navProfileTab" onclick="switchTab('profileTab', this)">
                 <i class="fa-solid fa-circle-user"></i>
                 <span>User Profile</span>
-            </a>
         </nav>
 
         <div class="logout-section">
@@ -84,7 +85,7 @@
         </div>
     </aside>
 
-    <!-- Main Light Content Canvas -->
+    <!-- Main Content Canvas -->
     <div class="content-wrapper">
         <header class="main-header">
             <h3 id="currentTabTitle">User Dashboard</h3>
@@ -109,13 +110,17 @@
                 <div class="content-card welcome-card">
                     <div class="welcome-text">
                         <h1>Hello, <span class="patient-name-placeholder">User</span>!</h1>
-                        <p>How are you feeling today? Check your symptoms and monitor your daily recovery metrics below.</p>
+                        <p>How are you feeling today? Monitor your overall wellness metrics and health trends below.</p>
                         <button class="btn-primary" style="margin-top: 16px;" onclick="document.querySelector('[onclick*=\'checkerTab\']').click()">
                             <i class="fa-solid fa-wand-magic-sparkles"></i> Run Symptom Check
                         </button>
                     </div>
+                    <!-- Heartbeat pulse SVG line graphic -->
+                    <svg viewBox="0 0 100 30" class="heartbeat-line" style="position: absolute; bottom: 0; right: 140px; width: 220px; opacity: 0.15; pointer-events: none; z-index: 1;">
+                        <path d="M0 15 H30 L35 5 L40 25 L45 12 L48 18 L51 15 H100" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
                     <div class="welcome-score-circle">
-                        <div class="score-value" id="dashboardHealthScore">92</div>
+                        <div class="score-value" id="dashboardHealthScore">95</div>
                         <span class="score-label">Health Score</span>
                     </div>
                 </div>
@@ -132,34 +137,53 @@
                     </div>
                     <div class="stat-card">
                         <div class="stat-header">
-                            <span class="stat-title">Water Target Progress</span>
-                            <div class="stat-icon info"><i class="fa-solid fa-glass-water"></i></div>
+                            <span class="stat-title">Body Mass Index (BMI)</span>
+                            <div class="stat-icon info"><i class="fa-solid fa-weight-scale"></i></div>
                         </div>
-                        <div class="stat-value" id="statWaterProgress">0 / 8 cups</div>
-                        <div class="stat-change up"><i class="fa-solid fa-droplet"></i><span id="statWaterPct">0% target reached</span></div>
+                        <div class="stat-value" id="statBMIDisplay">22.9</div>
+                        <div class="stat-change up"><i class="fa-solid fa-circle-info"></i><span id="statBMIStatus">Normal Range</span></div>
+                        <div class="bmi-spectrum" style="position: relative; width: 100%; height: 8px; border-radius: 4px; margin-top: 12px; background: linear-gradient(to right, #3b82f6 0%, #10b981 30%, #f59e0b 70%, #ef4444 100%);">
+                            <div id="statBMIPointer" style="position: absolute; top: -4px; left: 50%; width: 4px; height: 16px; background: var(--text-primary); border-radius: 2px; transition: left 0.5s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 0 4px rgba(0,0,0,0.2);"></div>
+                        </div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-header">
-                            <span class="stat-title">Daily Recovery Tasks</span>
-                            <div class="stat-icon success"><i class="fa-solid fa-list-check"></i></div>
+                            <span class="stat-title">Water Target Progress</span>
+                            <div class="stat-icon success"><i class="fa-solid fa-glass-water"></i></div>
                         </div>
-                        <div class="stat-value" id="statTasksCount">0 / 4 done</div>
-                        <div class="stat-change up"><i class="fa-solid fa-circle-check"></i><span id="statTasksPct">0% done</span></div>
+                        <div class="stat-value" id="statWaterProgress">0 / 8 cups</div>
+                        <div class="stat-change up"><i class="fa-solid fa-droplet"></i><span id="statWaterPct">0% target reached</span></div>
+                        <div class="progress-bar-container" style="width: 100%; height: 8px; background: var(--border-color); border-radius: 4px; margin-top: 12px; overflow: hidden;">
+                            <div id="statWaterBar" style="width: 0%; height: 100%; background: var(--success); transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);"></div>
+                        </div>
                     </div>
                 </div>
 
                 <!-- History list and health insights grid -->
                 <div class="overview-grid">
                     <div class="content-card">
-                        <h4 class="form-section-title"><i class="fa-solid fa-clock-rotate-left"></i> Recent Health Checks</h4>
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+                            <h4 class="form-section-title" style="margin-bottom:0;"><i class="fa-solid fa-clock-rotate-left"></i> Health Check History</h4>
+                            <div style="display: flex; gap: 8px;">
+                                <input type="text" id="historySearch" oninput="filterHistory()" placeholder="Search condition..." style="padding: 6px 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 12px; background: var(--bg-secondary); color: var(--text-primary);">
+                                <select id="historyFilterRisk" onchange="filterHistory()" style="padding: 6px 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 12px; background: var(--bg-secondary); color: var(--text-primary);">
+                                    <option value="">All Risk Levels</option>
+                                    <option value="Low">Low Risk</option>
+                                    <option value="Medium">Medium Risk</option>
+                                    <option value="High">High Risk</option>
+                                    <option value="Critical">Critical Risk</option>
+                                </select>
+                            </div>
+                        </div>
                         <div class="table-container">
                             <table class="premium-table">
                                 <thead>
                                     <tr>
                                         <th>Date</th>
-                                        <th>Predicted Condition</th>
+                                        <th>Condition</th>
                                         <th>Confidence</th>
                                         <th>Risk Level</th>
+                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody id="dashboardChecksHistory">
@@ -170,16 +194,16 @@
                     </div>
 
                     <div class="content-card">
-                        <h4 class="form-section-title"><i class="fa-solid fa-heart-circle-check"></i> Personalized Health Insights</h4>
+                        <h4 class="form-section-title"><i class="fa-solid fa-heart-circle-check"></i> Health Insights & Daily Tip</h4>
+                        <div class="insight-item" style="background: var(--primary-light); margin-bottom: 16px; border-radius: 12px; padding: 16px; border-left: 4px solid var(--primary);">
+                            <div class="insight-icon" style="color: var(--primary); font-size: 20px; margin-bottom: 8px;"><i class="fa-solid fa-lightbulb"></i></div>
+                            <div class="insight-text">
+                                <h5 style="font-weight: 700; margin-bottom: 4px;">Wellness Tip of the Day</h5>
+                                <p id="dailyTipText" style="font-size: 13px; line-height: 1.5; color: var(--text-secondary);">Drink a glass of water first thing in the morning to jumpstart hydration and metabolism.</p>
+                            </div>
+                        </div>
                         <div class="insights-container" id="dashboardInsightsList">
                             <!-- Dynamic Insights -->
-                            <div class="insight-item">
-                                <div class="insight-icon"><i class="fa-solid fa-circle-info"></i></div>
-                                <div class="insight-text">
-                                    <h5>Check symptoms often</h5>
-                                    <p>Run regular checkups if you experience changes in body temperature or respiration.</p>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -206,19 +230,17 @@
 
                             <!-- Symptom chips categorization -->
                             <div class="symptom-category-title">General Symptoms</div>
-                            <div class="symptom-chips-container" id="chipsGeneral">
-                                <!-- Chips will be populated here -->
-                            </div>
+                            <div class="symptom-chips-container" id="chipsGeneral"></div>
 
                             <div class="symptom-category-title" style="margin-top: 16px;">Respiratory & Throat</div>
-                            <div class="symptom-chips-container" id="chipsRespiratory">
-                                <!-- Chips populated here -->
-                            </div>
+                            <div class="symptom-chips-container" id="chipsRespiratory"></div>
 
                             <div class="symptom-category-title" style="margin-top: 16px;">Systemic & Gastrointestinal</div>
-                            <div class="symptom-chips-container" id="chipsDigestive">
-                                <!-- Chips populated here -->
-                            </div>
+                            <div class="symptom-chips-container" id="chipsDigestive"></div>
+
+                            <!-- Emergency Signs category -->
+                            <div class="symptom-category-title" style="color: var(--danger); margin-top: 16px;"><i class="fa-solid fa-triangle-exclamation"></i> Emergency / Critical Symptoms (Immediate Warning)</div>
+                            <div class="symptom-chips-container" id="chipsEmergency"></div>
 
                             <!-- Patient Vitals section -->
                             <h4 class="form-section-title" style="margin-top: 32px;"><i class="fa-solid fa-heart-pulse"></i> Patient Vitals (Optional)</h4>
@@ -255,6 +277,16 @@
 
                     <!-- Disease Prediction Results Panel -->
                     <div class="result-card" id="checkerResultPanel">
+                        <!-- Skeleton Loader (Hidden by default) -->
+                        <div class="result-placeholder hidden" id="checkerSkeleton">
+                            <div class="spinner" style="width: 40px; height: 40px; border-width: 3px; border-color: var(--primary) transparent transparent transparent; margin: 0 auto 16px auto;"></div>
+                            <h3>Analyzing Symptom Profiles</h3>
+                            <p style="color: var(--text-secondary); font-size: 13px; max-width: 260px; margin-top: 8px; margin-left: auto; margin-right: auto;">
+                                Running neural classifier checks and evaluating blood vitals bounds...
+                            </p>
+                        </div>
+
+                        <!-- Awaiting Placeholder -->
                         <div class="result-placeholder" id="checkerPlaceholder">
                             <i class="fa-solid fa-heart-pulse placeholder-icon"></i>
                             <h3>Awaiting Analysis</h3>
@@ -263,17 +295,46 @@
                             </p>
                         </div>
 
+                        <!-- Emergency Red Alert Display -->
+                        <div class="emergency-card hidden" id="outEmergencyAlert" style="background: var(--danger-light); border: 2px solid var(--danger); border-radius: 16px; padding: 24px; color: var(--text-primary); text-align: left;">
+                            <h2 style="color: var(--danger); font-size: 22px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                                <i class="fa-solid fa-triangle-exclamation"></i> EMERGENCY ALARM
+                            </h2>
+                            <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">⚠ Visit Hospital Immediately</h3>
+                            <p style="font-size: 14px; line-height: 1.6; margin-bottom: 16px; color: var(--text-secondary);">
+                                Critical red-flag emergency symptoms have been indicated. Please call ambulance services or visit the nearest healthcare emergency room immediately.
+                            </p>
+                            <div class="guidance-box" style="background: rgba(239, 68, 68, 0.05); border-left: 4px solid var(--danger); padding: 12px; border-radius: 8px; margin-bottom: 16px;">
+                                <strong style="display: block; margin-bottom: 4px; color: var(--danger); font-size: 12px;">Detected Emergency Flags:</strong>
+                                <span id="outEmergencySymptoms" style="font-size: 13px; font-weight: 500;"></span>
+                            </div>
+                            <div style="display: flex; gap: 10px;">
+                                <a href="tel:911" class="btn-primary" style="background: var(--danger); color: white; display: inline-flex; align-items: center; gap: 8px; flex: 1; justify-content: center; text-decoration: none; border-radius: 10px; font-weight: 600; box-shadow: 0 4px 10px rgba(239,68,68,0.2);">
+                                    <i class="fa-solid fa-phone"></i> Call Emergency (911)
+                                </a>
+                                <button class="btn-outline" style="border-color: var(--danger); color: var(--danger);" onclick="resetCheckerForm()">
+                                    Clear Form
+                                </button>
+                            </div>
+                        </div>
+
                         <!-- Full Disease Outcome Display -->
                         <div class="result-details hidden" id="checkerResultContent" style="text-align: left; width: 100%;">
                             <span class="result-header-badge">AI Clinical Prediction</span>
                             <h2 class="result-disease-name" id="outDiseaseName">Influenza</h2>
                             
-                            <div class="risk-indicator" id="outRiskBadge">
-                                <i class="fa-solid fa-triangle-exclamation"></i>
-                                <span id="outRiskText">Medium Risk</span>
+                            <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+                                <div class="risk-indicator" id="outRiskBadge" style="margin-bottom:0;">
+                                    <i class="fa-solid fa-triangle-exclamation"></i>
+                                    <span id="outRiskText">Medium Risk</span>
+                                </div>
+                                <div class="risk-indicator info" id="outSeverityBadge" style="background: var(--info-light); color: var(--info); border: 1.5px solid var(--info); margin-bottom:0;">
+                                    <i class="fa-solid fa-stethoscope"></i>
+                                    <span id="outSeverityText">Moderate Severity</span>
+                                </div>
                             </div>
 
-                            <div class="gauge-container" style="align-items: flex-start;">
+                            <div class="gauge-container" style="align-items: flex-start; margin-bottom: 16px;">
                                 <span style="font-size: 12px; color: var(--text-secondary); font-weight: 600; margin-bottom: 6px;">AI Confidence Score</span>
                                 <div class="gauge-bar-bg" style="width: 100%;">
                                     <div class="gauge-bar-fill" id="outGaugeFill"></div>
@@ -281,16 +342,19 @@
                                 <span class="gauge-value" id="outConfidenceText">88%</span>
                             </div>
 
-                            <div style="margin: 16px 0; font-size: 13px; line-height: 1.5;" id="outDescription">
+                            <div style="margin: 16px 0; font-size: 13px; line-height: 1.5; color: var(--text-secondary);" id="outDescription">
                                 Disease description details.
+                            </div>
+
+                            <div class="guidance-box" style="margin-top: 12px; margin-bottom: 16px; border-left: 4px solid var(--primary); background: var(--primary-light);">
+                                <div class="guidance-title" style="color: var(--primary);"><i class="fa-solid fa-circle-question"></i> Why was this predicted?</div>
+                                <div class="guidance-text" style="font-size: 12px; line-height: 1.5;" id="outWhyExplanation"></div>
                             </div>
 
                             <!-- Top 3 possible list -->
                             <div style="margin-bottom: 16px;">
                                 <strong style="font-size: 12px; display: block; margin-bottom: 6px;">Top 3 Possible Matches:</strong>
-                                <div id="outTopMatchesList" style="display: flex; gap: 8px; flex-wrap: wrap;">
-                                    <!-- Dynamic chips -->
-                                </div>
+                                <div id="outTopMatchesList" style="display: flex; gap: 8px; flex-wrap: wrap;"></div>
                             </div>
 
                             <!-- Recommendations columns -->
@@ -322,7 +386,7 @@
                             </div>
 
                             <div class="result-actions">
-                                <button class="btn-export" onclick="exportPatientReportPDF()">
+                                <button class="btn-export" id="btnExportPDF" onclick="exportPatientReportPDF()">
                                     <i class="fa-solid fa-file-pdf"></i>
                                     <span>Download PDF Report</span>
                                 </button>
@@ -340,14 +404,35 @@
             <div class="tab-pane" id="recoveryTab">
                 <div class="page-title-row">
                     <h1 class="page-title">Recovery Assistant</h1>
-                    <p class="page-subtitle">Track your hydration progress, checklist completions, sleep metrics, and wellness scores.</p>
+                    <p class="page-subtitle">Track your hydration progress, medicine reminders, sleep logs, and recovery tasks.</p>
                 </div>
 
                 <div class="overview-grid">
                     <!-- Daily Checklist & Water Tracking -->
                     <div class="content-card">
+                        <!-- Progress status ring / completion bar -->
+                        <div style="background: var(--primary-light); border-radius: 12px; padding: 16px; margin-bottom: 24px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <strong style="font-size: 14px; color: var(--primary);">Today's Recovery Goal</strong>
+                                <span id="recoveryPctText" style="font-weight: 700; color: var(--primary);">0% Done</span>
+                            </div>
+                            <div style="width: 100%; height: 10px; background: var(--border-color); border-radius: 10px; overflow: hidden;">
+                                <div id="recoveryGoalFill" style="width: 0%; height: 100%; background: var(--primary); transition: width 0.3s ease;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Mood selector tracker -->
+                        <h4 class="form-section-title"><i class="fa-solid fa-heart-pulse"></i> How is your mood today?</h4>
+                        <div style="display: flex; gap: 12px; justify-content: space-around; margin-bottom: 24px; padding: 10px 0;">
+                            <button class="mood-btn" onclick="logMood('Poor', this)" style="background: transparent; border: none; font-size: 28px; cursor: pointer; transition: transform 0.2s;" title="Poor">😞</button>
+                            <button class="mood-btn" onclick="logMood('Ok', this)" style="background: transparent; border: none; font-size: 28px; cursor: pointer; transition: transform 0.2s;" title="Ok">😐</button>
+                            <button class="mood-btn" onclick="logMood('Good', this)" style="background: transparent; border: none; font-size: 28px; cursor: pointer; transition: transform 0.2s;" title="Good">🙂</button>
+                            <button class="mood-btn" onclick="logMood('Excellent', this)" style="background: transparent; border: none; font-size: 28px; cursor: pointer; transition: transform 0.2s;" title="Excellent">😄</button>
+                        </div>
+
+                        <!-- Water Tracker -->
                         <h4 class="form-section-title"><i class="fa-solid fa-droplet"></i> Water Intake Tracker</h4>
-                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
                             <div>
                                 <h3 id="recoveryWaterDisplay">0 / 8 Cups</h3>
                                 <p style="font-size: 12px; color: var(--text-secondary);">Target: 2 Liters daily</p>
@@ -358,8 +443,7 @@
                             </div>
                         </div>
 
-                        <!-- Progress cup bar -->
-                        <div class="water-cups-row" id="waterCupsContainer" style="display: flex; gap: 12px; font-size: 24px; color: var(--text-muted); margin-bottom: 32px;">
+                        <div class="water-cups-row" id="waterCupsContainer" style="display: flex; gap: 12px; font-size: 24px; color: var(--text-muted); margin-bottom: 24px;">
                             <i class="fa-solid fa-glass-water"></i>
                             <i class="fa-solid fa-glass-water"></i>
                             <i class="fa-solid fa-glass-water"></i>
@@ -373,28 +457,44 @@
                         <h4 class="form-section-title"><i class="fa-solid fa-list-check"></i> Daily Recovery Checklist</h4>
                         <div style="display: flex; flex-direction: column; gap: 12px;">
                             <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--bg-secondary); border-radius: 10px; cursor: pointer;">
-                                <input type="checkbox" id="chkMeds" onchange="updateRecoveryProgress()">
+                                <input type="checkbox" id="chkMeds" onchange="toggleChecklistTask('chkMeds')">
                                 <span>Take scheduled medications</span>
                             </label>
                             <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--bg-secondary); border-radius: 10px; cursor: pointer;">
-                                <input type="checkbox" id="chkHydrate" onchange="updateRecoveryProgress()">
+                                <input type="checkbox" id="chkHydrate" onchange="toggleChecklistTask('chkHydrate')">
                                 <span>Complete water intake goal</span>
                             </label>
                             <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--bg-secondary); border-radius: 10px; cursor: pointer;">
-                                <input type="checkbox" id="chkRest" onchange="updateRecoveryProgress()">
+                                <input type="checkbox" id="chkRest" onchange="toggleChecklistTask('chkRest')">
                                 <span>Complete recommended daily sleep</span>
                             </label>
                             <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--bg-secondary); border-radius: 10px; cursor: pointer;">
-                                <input type="checkbox" id="chkLightMeals" onchange="updateRecoveryProgress()">
+                                <input type="checkbox" id="chkLightMeals" onchange="toggleChecklistTask('chkLightMeals')">
                                 <span>Eat recommended healthy meals</span>
                             </label>
                         </div>
                     </div>
 
-                    <!-- Sleep & Health Improvement Trackers -->
+                    <!-- Medicine List Manager & Sleep Trackers -->
                     <div class="content-card">
+                        <!-- Medicine Reminders -->
+                        <h4 class="form-section-title"><i class="fa-solid fa-pills"></i> Medicine Reminders</h4>
+                        
+                        <!-- Add Medicine Row Form -->
+                        <form id="addMedsForm" onsubmit="handleAddMedicine(event)" style="display: flex; gap: 8px; margin-bottom: 16px; align-items: center; flex-wrap: wrap;">
+                            <input type="text" id="medNameInput" placeholder="Med Name" required style="flex: 1.5; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 13px; background: var(--bg-secondary); color: var(--text-primary);">
+                            <input type="text" id="medDosageInput" placeholder="Dosage (e.g. 500mg)" style="flex: 1; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 13px; background: var(--bg-secondary); color: var(--text-primary);">
+                            <input type="text" id="medTimeInput" placeholder="Time (e.g. Morning)" required style="flex: 1; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 13px; background: var(--bg-secondary); color: var(--text-primary);">
+                            <button type="submit" class="btn-primary" style="padding: 8px 12px; font-size: 12px; height: 35px; border-radius: 8px;"><i class="fa-solid fa-plus"></i> Add</button>
+                        </form>
+
+                        <div id="medicineReminderList" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 32px;">
+                            <!-- Dynamic Meds List -->
+                        </div>
+
+                        <!-- Sleep Tracker -->
                         <h4 class="form-section-title"><i class="fa-solid fa-bed"></i> Sleep Tracker</h4>
-                        <div style="display: flex; gap: 12px; align-items: flex-end; margin-bottom: 24px;">
+                        <div style="display: flex; gap: 12px; align-items: flex-end; margin-bottom: 20px;">
                             <div class="form-group" style="flex: 1; margin-bottom: 0;">
                                 <label for="sleepHoursInput">Sleep Duration (Hours)</label>
                                 <input type="number" step="0.5" id="sleepHoursInput" class="form-input" value="8" min="0" max="24">
@@ -405,8 +505,9 @@
                             <canvas id="sleepChart"></canvas>
                         </div>
 
-                        <h4 class="form-section-title" style="margin-top: 32px;"><i class="fa-solid fa-chart-line"></i> Health Improvement Tracker</h4>
-                        <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 12px;">Based on your symptoms checklists history over the last 7 days:</p>
+                        <!-- Health Improvement Tracker -->
+                        <h4 class="form-section-title" style="margin-top: 32px;"><i class="fa-solid fa-chart-line"></i> Health Index Score Trends</h4>
+                        <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 12px;">Based on your completed symptom check logs and daily tracker compliance:</p>
                         <div style="height: 180px; position: relative;">
                             <canvas id="recoveryProgressChart"></canvas>
                         </div>
@@ -439,7 +540,7 @@
                             <div class="empty-state" style="padding: 40px;">
                                 <i class="fa-solid fa-book-open empty-icon"></i>
                                 <h4 class="empty-title">Select an Illness</h4>
-                                <p class="empty-desc">Choose a disease from the list on the left to read clinical info details.</p>
+                                <p class="empty-desc">Choose a disease from the list on the left to read clinical details.</p>
                             </div>
                         </div>
                     </div>
@@ -449,21 +550,29 @@
             <!-- TAB 5: USER PROFILE -->
             <div class="tab-pane" id="profileTab">
                 <div class="page-title-row">
-                    <h1 class="page-title">User Profile</h1>
-                    <p class="page-subtitle">Manage your personal metrics, body height, weight, and clinical allergies.</p>
+                    <h1 class="page-title">User Profile Portal</h1>
+                    <p class="page-subtitle">Manage your metrics, height, weight, chronic conditions, and emergency details.</p>
                 </div>
 
                 <div class="overview-grid" style="grid-template-columns: 0.7fr 1.3fr;">
                     <div class="content-card" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px;">
                         <div class="user-avatar" style="width: 100px; height: 100px; font-size: 40px; margin-bottom: 20px; background-color: var(--primary); color: #ffffff;" id="profileAvatarLetter">U</div>
                         <h2 id="profileNameDisplay" style="font-weight: 700; margin-bottom: 4px;">Patient User</h2>
-                        <span class="badge-pill badge-low" style="margin-bottom: 24px; background-color: var(--primary-light); color: var(--primary);">Active User</span>
+                        <span class="badge-pill badge-low" style="margin-bottom: 24px; background-color: var(--primary-light); color: var(--primary);">Active Patient</span>
                         
+                        <!-- Profile BMI Card -->
+                        <div style="background: var(--bg-primary); border: 1.5px solid var(--border-color); border-radius: 12px; padding: 12px; width: 100%; margin-bottom: 20px; text-align: center;">
+                            <span style="font-size: 11px; color: var(--text-secondary); text-transform: uppercase; font-weight: 700;">Calculated BMI</span>
+                            <h3 style="font-size: 26px; font-weight: 800; color: var(--primary); margin: 4px 0;" id="profileBMIText">22.9</h3>
+                            <span class="badge-pill badge-low" id="profileBMIStatusBadge" style="font-size: 11px;">Normal Range</span>
+                        </div>
+
                         <div style="width: 100%; border-top: 1px solid var(--border-color); padding-top: 20px; text-align: left; font-size: 13px;">
                             <div style="margin-bottom: 12px;"><strong>Age:</strong> <span style="float: right; color: var(--text-secondary);" id="profileAgeVal">25</span></div>
                             <div style="margin-bottom: 12px;"><strong>Gender:</strong> <span style="float: right; color: var(--text-secondary);" id="profileGenderVal">Male</span></div>
                             <div style="margin-bottom: 12px;"><strong>Height:</strong> <span style="float: right; color: var(--text-secondary);" id="profileHeightVal">175 cm</span></div>
-                            <div><strong>Weight:</strong> <span style="float: right; color: var(--text-secondary);" id="profileWeightVal">70 kg</span></div>
+                            <div style="margin-bottom: 12px;"><strong>Weight:</strong> <span style="float: right; color: var(--text-secondary);" id="profileWeightVal">70 kg</span></div>
+                            <div><strong>Blood Group:</strong> <span style="float: right; color: var(--text-secondary);" id="profileBloodGroupVal">O+</span></div>
                         </div>
                     </div>
 
@@ -496,6 +605,16 @@
                                 <div class="form-group">
                                     <label for="profileWeight">Weight (kg)</label>
                                     <input type="number" class="form-input" id="profileWeight" value="70" required>
+                                </div>
+                            </div>
+                            <div class="form-grid-2">
+                                <div class="form-group">
+                                    <label for="profileBloodGroup">Blood Group</label>
+                                    <input type="text" class="form-input" id="profileBloodGroup" value="O+">
+                                </div>
+                                <div class="form-group">
+                                    <label for="profileEmergencyContact">Emergency Contact (Phone/Name)</label>
+                                    <input type="text" class="form-input" id="profileEmergencyContact" placeholder="e.g. Jane Doe - 9876543210">
                                 </div>
                             </div>
                             <div class="form-group" style="margin-bottom: 16px;">
