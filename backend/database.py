@@ -9,38 +9,70 @@ load_dotenv()
 MONGO_URI = os.getenv("MONGO_URI")
 DATABASE_NAME = os.getenv("DATABASE_NAME")
 
-# Define fallback collection classes for offline resilience
+import threading
+
+file_lock = threading.Lock()
+
 # Define fallback collection classes for offline resilience
 class LocalJSONCollection:
     def __init__(self, filename):
-        self.filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), filename)
+        db_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "db")
+        os.makedirs(db_dir, exist_ok=True)
+        self.filename = os.path.join(db_dir, filename)
         if not os.path.exists(self.filename):
             with open(self.filename, 'w') as f:
                 json.dump([], f)
 
     def _read(self):
-        try:
-            with open(self.filename, 'r') as f:
-                return json.load(f)
-        except Exception:
-            return []
+        with file_lock:
+            try:
+                with open(self.filename, 'r') as f:
+                    return json.load(f)
+            except Exception:
+                return []
 
     def _write(self, data):
-        try:
-            with open(self.filename, 'w') as f:
-                json.dump(data, f, default=str, indent=4)
-        except Exception as e:
-            print(f"Error writing to local JSON fallback database: {e}")
+        with file_lock:
+            try:
+                with open(self.filename, 'w') as f:
+                    json.dump(data, f, default=str, indent=4)
+            except Exception as e:
+                print(f"Error writing to local JSON fallback database: {e}")
+
+    def _match_query(self, item, query):
+        if not query:
+            return True
+        for k, v in query.items():
+            val = item.get(k)
+            if isinstance(v, dict):
+                matched_op = True
+                for op, op_val in v.items():
+                    if op == "$regex":
+                        import re
+                        options = v.get("$options", "")
+                        flags = 0
+                        if "i" in options:
+                            flags |= re.IGNORECASE
+                        if not val or not re.search(str(op_val), str(val), flags):
+                            matched_op = False
+                            break
+                    elif op == "$options":
+                        continue
+                    else:
+                        if val != op_val:
+                            matched_op = False
+                            break
+                if not matched_op:
+                    return False
+            else:
+                if val != v:
+                    return False
+        return True
 
     def find_one(self, query):
         data = self._read()
         for item in data:
-            match = True
-            for k, v in query.items():
-                if item.get(k) != v:
-                    match = False
-                    break
-            if match:
+            if self._match_query(item, query):
                 return item
         return None
 
@@ -62,12 +94,7 @@ class LocalJSONCollection:
         
         filtered = []
         for item in data:
-            match = True
-            for k, v in query.items():
-                if item.get(k) != v:
-                    match = False
-                    break
-            if match:
+            if self._match_query(item, query):
                 filtered.append(item)
         return FindCursor(filtered)
 
@@ -75,12 +102,7 @@ class LocalJSONCollection:
         data = self._read()
         updated_count = 0
         for item in data:
-            match = True
-            for k, v in query.items():
-                if item.get(k) != v:
-                    match = False
-                    break
-            if match:
+            if self._match_query(item, query):
                 if "$set" in update:
                     for uk, uv in update["$set"].items():
                         item[uk] = uv
@@ -97,12 +119,7 @@ class LocalJSONCollection:
         data = self._read()
         index_to_delete = -1
         for i, item in enumerate(data):
-            match = True
-            for k, v in query.items():
-                if item.get(k) != v:
-                    match = False
-                    break
-            if match:
+            if self._match_query(item, query):
                 index_to_delete = i
                 break
         if index_to_delete != -1:
@@ -116,12 +133,7 @@ class LocalJSONCollection:
         initial_len = len(data)
         new_data = []
         for item in data:
-            match = True
-            for k, v in query.items():
-                if item.get(k) != v:
-                    match = False
-                    break
-            if not match:
+            if not self._match_query(item, query):
                 new_data.append(item)
         deleted_count = initial_len - len(new_data)
         if deleted_count > 0:
@@ -153,6 +165,13 @@ class FindCursor:
 
     def __iter__(self):
         return iter(self.data)
+
+    def __len__(self):
+        return len(self.data)
+
+    def __getitem__(self, index):
+        return self.data[index]
+
 
 # Connection Setup
 db_connected = False
@@ -199,3 +218,17 @@ else:
     feedback = LocalJSONCollection("feedback_db.json")
     settings = LocalJSONCollection("settings_db.json")
     analytics = LocalJSONCollection("analytics_db.json")
+
+def init_db_indexes():
+    if db_connected:
+        try:
+            import pymongo
+            users.create_index([("email", pymongo.ASCENDING)], unique=True)
+            predictions.create_index([("email", pymongo.ASCENDING)])
+            predictions.create_index([("timestamp", pymongo.DESCENDING)])
+            water_tracker.create_index([("email", pymongo.ASCENDING), ("date", pymongo.ASCENDING)])
+            medicine_tracker.create_index([("email", pymongo.ASCENDING)])
+            recovery_tracker.create_index([("email", pymongo.ASCENDING), ("date", pymongo.ASCENDING)])
+            print("MongoDB indexes created successfully.")
+        except Exception as e:
+            print(f"Failed to initialize database indexes: {e}")

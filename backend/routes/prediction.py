@@ -2,6 +2,7 @@ from fastapi import APIRouter, Header, HTTPException, Depends, Query, Response
 from database import predictions
 from utils.auth import decode_access_token
 from schemas import PredictRequest
+from routes.auth import get_current_user
 import joblib
 import os
 from datetime import datetime
@@ -32,15 +33,7 @@ encoder = joblib.load(
     )
 )
 
-# Authentication dependency
-def verify_token(authorization: str = Header(None)):
-    if not authorization or not authorization.startswith("Bearer "):
-        raise HTTPException(status_code=401, detail="Session token required. Please sign in.")
-    token = authorization.split(" ")[1]
-    payload = decode_access_token(token)
-    if not payload:
-        raise HTTPException(status_code=401, detail="Invalid or expired session. Please sign in again.")
-    return payload
+# Authentication dependency verify_token replaced by get_current_user
 
 DISEASE_METADATA = {
     "covid": {
@@ -460,7 +453,7 @@ def generate_pdf_report(item):
     return buffer
 
 @router.post("/predict")
-def predict(data: PredictRequest, current_user: dict = Depends(verify_token)):
+def predict(data: PredictRequest, current_user: dict = Depends(get_current_user)):
     # 1. Emergency Detection
     is_emergency = False
     emergency_symptoms = []
@@ -480,59 +473,17 @@ def predict(data: PredictRequest, current_user: dict = Depends(verify_token)):
     if data.emergency_very_high_fever == 1 or (data.vital_temp and data.vital_temp >= 39.5):
         is_emergency = True
         emergency_symptoms.append("Very High Fever")
-        
-    if is_emergency:
-        meta = {
-            "description": "One or more critical red-flag emergency symptoms (such as chest pain, severe shortness of breath, blood vomiting, high fever, or loss of consciousness) have been indicated. This requires immediate clinical evaluation at an emergency department.",
-            "causes": ["Acute cardiovascular, respiratory, or systemic pathology"],
-            "symptoms": emergency_symptoms,
-            "actions": ["Call emergency services / ambulance immediately", "Go to the nearest emergency room without delay"],
-            "remedies": ["Stay in a resting posture, keep calm"],
-            "recovery_tips": ["Rest in a safe position", "Follow paramedic instructions"],
-            "prevention_tips": ["Seek regular medical advice for underlying conditions"],
-            "foods_to_eat": ["None - keep fasting until medically cleared"],
-            "foods_to_avoid": ["All foods and liquids until cleared by a doctor"],
-            "hydration": "Seek intravenous fluids under medical supervision if needed.",
-            "exercise": "Strict bed rest.",
-            "sleep": "Sleep under continuous medical observation.",
-            "recovery_time": "Emergency clinical evaluation",
-            "medicines": "None. Emergency treatment only.",
-            "emergency_signs": "All present",
-            "doctor_recommendation": "Consult ER doctor immediately",
-            "similar_diseases": []
-        }
-        
-        result = {
-            "email": current_user.get("email"),
-            "patient_name": current_user.get("name") or data.patient_name,
-            "timestamp": datetime.utcnow().isoformat(),
-            "disease": "Emergency Alert",
-            "confidence": "100%",
-            "severity": "Critical",
-            "risk_level": "Critical",
-            "emergency_detected": True,
-            "why_predicted": f"Emergency condition triggered due to: {', '.join(emergency_symptoms)}.",
-            "top_3_diseases": [],
-            "metadata": meta,
-            # include raw values
-            **data.dict()
-        }
-        
-        predictions.insert_one(result)
-        result["_id"] = str(result["_id"])
-        return result
 
     # 2. Standard Disease Prediction
     symptoms_order = [
         "fever", "cough", "headache", "fatigue", "vomiting", "diarrhea", "chest_pain", 
-        "sore_throat", "runny_nose", "dizziness", "joint_paint", "body_pain", "skin_rash", 
+        "sore_throat", "runny_nose", "dizziness", "joint_pain", "body_pain", "skin_rash", 
         "loss_of_smell", "loss_of_taste", "shortness_of_breath", "nausea", "chills", 
         "weight_loss", "abdominal_pain"
     ]
-    symptoms_keys = [s if s != "joint_paint" else "joint_pain" for s in symptoms_order]
     
     # Build feature row
-    features = [[int(getattr(data, symptom, 0)) for symptom in symptoms_keys]]
+    features = [[int(getattr(data, symptom, 0)) for symptom in symptoms_order]]
 
     prediction = model.predict(features)
     probabilities = model.predict_proba(features)[0]
@@ -586,6 +537,10 @@ def predict(data: PredictRequest, current_user: dict = Depends(verify_token)):
     elif severity == "Moderate" or confidence > 80:
         risk_level = "Medium"
 
+    if is_emergency:
+        severity = "Critical"
+        risk_level = "Critical"
+
     result = {
         "email": current_user.get("email"),
         "patient_name": current_user.get("name") or data.patient_name,
@@ -594,8 +549,9 @@ def predict(data: PredictRequest, current_user: dict = Depends(verify_token)):
         "confidence": f"{confidence}%",
         "severity": severity,
         "risk_level": risk_level,
-        "emergency_detected": False,
-        "why_predicted": explain_prediction(data.dict(), disease),
+        "emergency_detected": is_emergency,
+        "emergency_symptoms": emergency_symptoms if is_emergency else [],
+        "why_predicted": f"Emergency warnings detected ({', '.join(emergency_symptoms)}). " + explain_prediction(data.dict(), disease) if is_emergency else explain_prediction(data.dict(), disease),
         "top_3_diseases": top_3,
         "metadata": meta,
         **data.dict()
@@ -609,7 +565,7 @@ def predict(data: PredictRequest, current_user: dict = Depends(verify_token)):
 
 @router.get("/history")
 def history(
-    current_user: dict = Depends(verify_token),
+    current_user: dict = Depends(get_current_user),
     disease: str = Query(None),
     risk_level: str = Query(None),
     search: str = Query(None),
@@ -655,22 +611,42 @@ def history(
     return data
 
 @router.delete("/history/{id}")
-def delete_prediction(id: str, current_user: dict = Depends(verify_token)):
-    res = predictions.delete_one({"_id": id, "email": current_user.get("email")})
+def delete_prediction(id: str, current_user: dict = Depends(get_current_user)):
+    from bson.objectid import ObjectId
+    try:
+        obj_id = ObjectId(id)
+    except Exception:
+        obj_id = id
+    res = predictions.delete_one({"_id": obj_id, "email": current_user.get("email")})
     if res.deleted_count == 0:
-         res = predictions.delete_one({"_id": id}) # Fallback logic for unassigned
+        res = predictions.delete_one({"_id": id, "email": current_user.get("email")})
+    if res.deleted_count == 0:
+        res = predictions.delete_one({"_id": obj_id}) # Fallback logic for unassigned
+    if res.deleted_count == 0:
+        res = predictions.delete_one({"_id": id}) # Fallback logic for unassigned
     return {"message": "Prediction deleted successfully"}
 
 @router.delete("/history")
-def clear_history(current_user: dict = Depends(verify_token)):
+def clear_history(current_user: dict = Depends(get_current_user)):
     predictions.delete_many({"email": current_user.get("email")})
     return {"message": "Prediction history cleared successfully"}
 
 @router.get("/predictions/{id}/pdf")
-def get_pdf(id: str, current_user: dict = Depends(verify_token)):
-    item = predictions.find_one({"_id": id})
+def get_pdf(id: str, current_user: dict = Depends(get_current_user)):
+    from bson.objectid import ObjectId
+    try:
+        obj_id = ObjectId(id)
+    except Exception:
+        obj_id = id
+    item = predictions.find_one({"_id": obj_id})
+    if not item:
+        item = predictions.find_one({"_id": id})
     if not item:
         raise HTTPException(status_code=404, detail="Prediction report not found")
+        
+    # Security verification: ensure user owns the record
+    if item.get("email") != current_user.get("email"):
+        raise HTTPException(status_code=403, detail="Access denied. You do not have permission to view this report.")
         
     # Generate PDF
     pdf_buffer = generate_pdf_report(item)
