@@ -12,6 +12,10 @@
   ],
   "routes": [
     {
+      "src": "/(.*)\\.(html|css|js|png|jpg|jpeg|gif|svg|ico|json|pdf|txt)$",
+      "dest": "frontend/$1.$2"
+    },
+    {
       "src": "^/(api|predict|history|profile|register|login|forgot-password|reset-password|predictions)(.*)",
       "dest": "backend/app.py"
     },
