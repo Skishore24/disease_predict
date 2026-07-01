@@ -17,11 +17,19 @@ file_lock = threading.Lock()
 class LocalJSONCollection:
     def __init__(self, filename):
         db_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "db")
-        os.makedirs(db_dir, exist_ok=True)
+        try:
+            os.makedirs(db_dir, exist_ok=True)
+        except PermissionError:
+            # Fallback to /tmp on read-only serverless environments like Vercel
+            db_dir = os.path.join("/tmp", "db")
+            os.makedirs(db_dir, exist_ok=True)
         self.filename = os.path.join(db_dir, filename)
         if not os.path.exists(self.filename):
-            with open(self.filename, 'w') as f:
-                json.dump([], f)
+            try:
+                with open(self.filename, 'w') as f:
+                    json.dump([], f)
+            except Exception:
+                pass
 
     def _read(self):
         with file_lock:

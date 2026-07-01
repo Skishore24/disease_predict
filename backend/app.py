@@ -1,9 +1,16 @@
+import sys
+import os
+
+# Inject backend directory into sys.path to resolve module imports when hosted on Vercel
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+if BASE_DIR not in sys.path:
+    sys.path.insert(0, BASE_DIR)
+
 from fastapi import FastAPI, Depends, HTTPException, status, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse, RedirectResponse
-import os
 import json
 import time
 import logging
@@ -335,7 +342,8 @@ def get_analytics(current_user: dict = Depends(get_current_user)):
 def read_root():
     return RedirectResponse(url="/index.html")
 
-# Serve static frontend files (registered last)
+# Serve static frontend files if directory exists (facilitates local testing & vercel builds)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 FRONTEND_DIR = os.path.join(os.path.dirname(BASE_DIR), "frontend")
-app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
+if os.path.exists(FRONTEND_DIR):
+    app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
