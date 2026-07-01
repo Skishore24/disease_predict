@@ -6,25 +6,28 @@ MediPredict AI is a production-level, machine learning-powered medical classific
 
 ## 🎨 Premium Visual Features
 
-- **Poppins Typography**: Modern Poppins font applied across all user interfaces, input groups, alerts, and sidebars.
-- **Unified Developer Theme**: Main section designed in a sleek light theme featuring crisp white cards, light-grey backgrounds (`#f8f9fa`), and thin borders (`#dadce0`) styled around **Google Blue** (`#1a73e8`) accents.
-- **Slate Sidebar Separation**: Left sidebar navigation utilizes a professional dark-slate aesthetic (`#0f172a`) to match enterprise-level developer consoles.
-- **No Emojis**: Emojis have been entirely removed and replaced with Font Awesome 6 icons (e.g., stethoscope, pulse, lock, brain, checklist).
+- **Poppins & Outfit Typography**: Modern font systems applied across all user interfaces, input groups, charts, alerts, and sidebars.
+- **Unified Developer Theme**: Sleek light-themed dashboard featuring crisp white cards, subtle borders, and smooth shadows styled around professional brand accents.
+- **Premium Glassmorphic Sidebar**: Sidebar navigation uses a professional dark gradient aesthetic (`#070a13` to `#0c1122`) with smooth micro-interactions, custom scrollbars, active indicators, and typography.
+- **Iconography**: Entirely clean, using Font Awesome 6 icons (e.g., stethoscope, pulse, lock, brain, checklist, triangle-exclamation).
 
 ---
 
 ## 🔐 Advanced Security
 
-- **JWT Route Protection**: Backend routes (`/predict` and `/history`) verify client session signatures via standard `Bearer` tokens. Unauthenticated direct HTTP requests are rejected with a `401 Unauthorized` status.
-- **Instant Session Verification**: Dashboard pages run a script in the HTML `<head>` tag. Unauthenticated visitors are instantly redirected to `login.html` before any page content is parsed or rendered, preventing flashing UI bypasses.
+- **JWT Route Protection**: Backend routes verify client session signatures via standard `Bearer` tokens. Unauthenticated requests are rejected with a `401 Unauthorized` status.
+- **Instant Session Verification**: Dashboard pages verify session validation before rendering. Unauthenticated visitors are instantly redirected to `login.html`, preventing flashing UI bypasses.
 - **Password Hashing**: User credentials are encrypted at registration using Bcrypt hashing before storage.
+- **API Rate Limiting**: Built-in sliding-window memory rate limiting on auth endpoints (20 req/min), diagnostic prediction endpoints (15 req/min), and general API routes (120 req/min) to prevent brute force and DDoS attacks.
+- **Input Validation**: Robust Pydantic request validation and runtime schema constraints.
 
 ---
 
-## 🗄️ Resilient Hybrid Database
+## 🗄️ Resilient Hybrid Database & Indexing
 
 - **MongoDB Atlas Connection**: Default primary data layer connects securely to MongoDB Atlas.
-- **Local Fallback Database**: If Atlas is unreachable (e.g. network timeout or SSL handshake issues), the system automatically redirects read/write operations to local persistent JSON databases (`backend/users_db.json` and `backend/predictions_db.json`), ensuring zero runtime crashes.
+- **Automatic Startup Indexing**: The backend automatically builds ascending indexes on startup for key search parameters (`users.email`, `predictions.email`, `predictions.timestamp`, etc.) to optimize query speeds.
+- **Resilient Fallback Local Database**: If MongoDB Atlas is unreachable, the system automatically redirects read/write operations to local persistent JSON databases with a thread-safe global lock to prevent write corruption. The fallback wrapper includes native support for MongoDB operators such as `$regex` and `$options` to support search filter behaviors offline.
 
 ---
 
@@ -39,32 +42,29 @@ Disease predict/
 │   ├── requirements.txt           # Python backend dependencies
 │   ├── .env                       # Environment configuration
 │   │
+│   ├── db/                        # Persistent local database JSON stores (offline fallback)
+│   ├── logs/                      # Rotated system logs
+│   │
 │   ├── models/                    # Serialized Machine Learning artifacts
 │   │   ├── disease_model.pkl      # Trained RandomForestClassifier model
-│   │   └── label_encoder.pkl      # Output label encoder
+│   │   ├── label_encoder.pkl      # Output label encoder
+│   │   └── model_metrics.json     # Pre-calculated model accuracy/precision metrics
 │   │
 │   ├── routes/                    # API endpoints
 │   │   ├── auth.py                # Practitioner authentication (/register, /login)
 │   │   └── prediction.py          # Secure diagnostics (/predict, /history)
 │   │
-│   └── utils/                     # Encryption & security helpers
+│   └── utils/                     # Encryption & logging helpers
 │       ├── auth.py                # JWT creation and decoding
-│       └── security.py            # Password hashing (Bcrypt)
+│       ├── security.py            # Password hashing (Bcrypt)
+│       └── logging_config.py      # Standardized system logger config
 │
-├── dataset/
-│   └── disease_dataset.csv        # Diagnostic training data
-│
-├── frontend/                      # User Interface assets (served as static files)
-│   ├── login.html                 # Unified sign-in and sign-up card
-│   ├── dashboard.html             # Practitioner workspace (Predictor & Search Database)
-│   │
-│   ├── css/
-│   │   ├── auth.css               # Portal styles (dark theme)
-│   │   └── dashboard.css          # Workspace styles (light theme with dark sidebar)
-│   │
-│   └── js/
-│       ├── auth.js                # Token management & login forms
-│       └── dashboard.js           # Diagnostics, history search & typewriter effects
+├── dataset/                       # Diagnostic training CSV data
+├── frontend/                      # User Interface assets
+│   ├── login.html                 # Sign-in / sign-up entrypoint
+│   ├── dashboard.html             # Main portal dashboard
+│   ├── css/                       # Dashboard, login and landing styles
+│   └── js/                        # Auth logic and interactive dashboard utilities
 │
 ├── training/
 │   └── train_model.py             # Random Forest classifier training script
@@ -75,7 +75,7 @@ Disease predict/
 
 ---
 
-## 🚀 Setup & Execution
+## 🚀 Setup & Execution (Local Machine)
 
 ### 1. Configure Environment Variables
 
@@ -95,16 +95,14 @@ ALGORITHM=HS256
 cd backend
 
 # Create environment
-py -m venv venv
+python -m venv venv
 
 # Activate (Windows)
-py -m venv venv
+.\venv\Scripts\activate
 
 # Activate (Mac/Linux)
 source venv/bin/activate
 ```
-
-python -m uvicorn app:app --reload
 
 ### 3. Install Dependencies
 
@@ -117,7 +115,7 @@ pip install -r requirements.txt
 FastAPI automatically serves the API and mounts the static frontend files on a single port.
 
 ```bash
-python -m uvicorn app:app
+python -m uvicorn app:app --reload
 ```
 
 - **Secure Web Application**: [http://127.0.0.1:8000/login.html](http://127.0.0.1:8000/login.html)

@@ -12,11 +12,10 @@ backend/venv/
 **/*.pyd
 
 # Local Database Stores (Offline Fallbacks)
-backend/users_db.json
-backend/predictions_db.json
+backend/db/*.json
 
 # Environment Configuration
-.env
+**/.env
 
 # Editor & System Metadata
 .vscode/

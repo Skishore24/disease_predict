@@ -128,34 +128,35 @@ const DISEASE_DB = {
 
 const SYMPTOMS_LIST = {
     "general": [
-        { id: "symptomFever", label: "Fever", key: "fever" },
-        { id: "symptomHeadache", label: "Headache", key: "headache" },
-        { id: "symptomFatigue", label: "Fatigue", key: "fatigue" },
-        { id: "symptomDizziness", label: "Dizziness", key: "dizziness" },
-        { id: "symptomJointPain", label: "Joint Pain", key: "joint_paint" },
-        { id: "symptomBodyPain", label: "Body Pain", key: "body_pain" },
-        { id: "symptomChills", label: "Chills", key: "chills" },
-        { id: "symptomWeightLoss", label: "Weight Loss", key: "weight_loss" }
+        { id: "symptomFever", label: "Fever", key: "fever", tags: ["high temperature", "feverish", "hot", "sweating", "warmth", "temp"] },
+        { id: "symptomHeadache", label: "Headache", key: "headache", tags: ["head pain", "migraine", "throbbing head", "head pressure"] },
+        { id: "symptomFatigue", label: "Fatigue", key: "fatigue", tags: ["tiredness", "exhaustion", "weakness", "sleepy", "lethargy"] },
+        { id: "symptomDizziness", label: "Dizziness", key: "dizziness", tags: ["lightheadedness", "vertigo", "spinning", "loss of balance", "unsteady"] },
+        { id: "symptomJointPain", label: "Joint Pain", key: "joint_pain", tags: ["arthralgia", "knee pain", "elbow pain", "wrist pain", "stiff joints"] },
+        { id: "symptomBodyPain", label: "Body Pain", key: "body_pain", tags: ["muscle aches", "myalgia", "body aches", "sore muscles"] },
+        { id: "symptomChills", label: "Chills", key: "chills", tags: ["shivering", "cold flashes", "trembling"] },
+        { id: "symptomWeightLoss", label: "Weight Loss", key: "weight_loss", tags: ["loss of appetite", "unintentional weight loss", "slimming"] },
+        { id: "symptomSkinRash", label: "Skin Rash", key: "skin_rash", tags: ["hives", "red spots", "itchy skin", "dermatitis", "eczema", "rash"] }
     ],
     "respiratory": [
-        { id: "symptomCough", label: "Cough", key: "cough" },
-        { id: "symptomSoreThroat", label: "Sore Throat", key: "sore_throat" },
-        { id: "symptomRunnyNose", label: "Runny Nose", key: "runny_nose" },
-        { id: "symptomLossSmell", label: "Loss of Smell", key: "loss_of_smell" },
-        { id: "symptomLossTaste", label: "Loss of Taste", key: "loss_of_taste" }
+        { id: "symptomCough", label: "Cough", key: "cough", tags: ["coughing", "dry cough", "wet cough", "phlegm"] },
+        { id: "symptomSoreThroat", label: "Sore Throat", key: "sore_throat", tags: ["throat pain", "difficulty swallowing", "itchy throat", "pharyngitis"] },
+        { id: "symptomRunnyNose", label: "Runny Nose", key: "runny_nose", tags: ["sneezing", "nasal congestion", "stuffy nose", "blocked nose", "mucus"] },
+        { id: "symptomLossSmell", label: "Loss of Smell", key: "loss_of_smell", tags: ["anosmia", "cannot smell"] },
+        { id: "symptomLossTaste", label: "Loss of Taste", key: "loss_of_taste", tags: ["ageusia", "cannot taste"] }
     ],
     "digestive": [
-        { id: "symptomVomiting", label: "Vomiting", key: "vomiting" },
-        { id: "symptomDiarrhea", label: "Diarrhea", key: "diarrhea" },
-        { id: "symptomNausea", label: "Nausea", key: "nausea" },
-        { id: "symptomAbdominal", label: "Abdominal Pain", key: "abdominal_pain" }
+        { id: "symptomVomiting", label: "Vomiting", key: "vomiting", tags: ["throwing up", "emesis", "puke"] },
+        { id: "symptomDiarrhea", label: "Diarrhea", key: "diarrhea", tags: ["loose stools", "watery stools", "stomach upset"] },
+        { id: "symptomNausea", label: "Nausea", key: "nausea", tags: ["feeling sick", "queasiness", "stomach sickness"] },
+        { id: "symptomAbdominal", label: "Abdominal Pain", key: "abdominal_pain", tags: ["stomach ache", "belly pain", "cramps", "stomach cramps"] }
     ],
     "emergency": [
-        { id: "symptomChestPain", label: "Chest Pain", key: "chest_pain" },
-        { id: "symptomShortBreath", label: "Difficulty Breathing", key: "shortness_of_breath" },
-        { id: "symptomBloodVomit", label: "Blood Vomiting", key: "emergency_blood_vomiting" },
-        { id: "symptomUnconscious", label: "Loss of Consciousness", key: "emergency_unconsciousness" },
-        { id: "symptomExtremeFever", label: "Very High Fever (>39.5°C)", key: "emergency_very_high_fever" }
+        { id: "symptomChestPain", label: "Chest Pain", key: "chest_pain", tags: ["angina", "chest pressure", "heart pain", "tight chest"] },
+        { id: "symptomShortBreath", label: "Difficulty Breathing", key: "shortness_of_breath", tags: ["dyspnea", "shortness of breath", "gasping", "breathless"] },
+        { id: "symptomBloodVomit", label: "Blood Vomiting", key: "emergency_blood_vomiting", tags: ["hematemesis", "vomiting blood"] },
+        { id: "symptomUnconscious", label: "Loss of Consciousness", key: "emergency_unconsciousness", tags: ["fainting", "passed out", "syncope", "blackout"] },
+        { id: "symptomExtremeFever", label: "Very High Fever (>39.5°C)", key: "emergency_very_high_fever", tags: ["hyperpyrexia", "extreme heat", "severe fever"] }
     ]
 };
 
@@ -165,16 +166,60 @@ const HEALTH_TIPS = [
     "Limit processed sugars to decrease cell inflammation levels.",
     "Take regular stretching breaks during desk work to prevent back fatigue.",
     "Maintain consistent daily meal timings to stabilize digestive processes.",
-    "Include high-fiber options like berries and leafy greens in your lunches."
+    "Include high-fiber options like berries and leafy greens in your lunches.",
+    "Practice deep breathing for 5 minutes daily to lower stress hormones and blood pressure.",
+    "Ensure you get at least 15-20 minutes of daily sunlight for healthy Vitamin D levels.",
+    "Limit screen time and blue light exposure for 1 hour before bedtime to improve sleep quality.",
+    "Use proper posture when sitting: keep your back straight, shoulders relaxed, and feet flat on the floor.",
+    "Snack on a handful of raw nuts like almonds or walnuts for healthy fats and sustained energy.",
+    "Drink herbal teas such as chamomile or peppermint to aid digestion and promote relaxation.",
+    "Incorporate light cardio exercises, like a brisk 30-minute walk, into your daily routine.",
+    "Keep a reusable water bottle near your desk to naturally remind you to stay hydrated throughout the day.",
+    "Wash your hands with soap for at least 20 seconds to prevent the spread of seasonal infections.",
+    "Listen to calming music or practice mindfulness to decompress after a busy or stressful day.",
+    "Avoid checking work emails immediately after waking up to foster a calmer start to your day.",
+    "Include lean proteins such as eggs, chicken, or lentils in your breakfast to boost morning stamina.",
+    "Add citrus fruits like oranges and lemons to your diet to support immune health with Vitamin C.",
+    "Replace processed grains with whole grains like brown rice or quinoa to sustain long-term digestion.",
+    "Stretch your hamstrings and daily to improve lower body flexibility and relieve lower back pain."
 ];
 
 // Recovery state trackers
 let waterCups = 0;
 let sleepHoursList = [7.5, 8.0, 7.0, 6.5, 8.0, 7.5, 8.0];
+let trendScores = [88, 89, 90, 88, 91, 93, 92];
 let sleepChart = null;
 let recoveryChart = null;
 let currentPredictionResult = null;
 let activeMood = "Good";
+
+async function fetchAnalyticsTrends() {
+    const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+    try {
+        const res = await fetch(`${API}/api/analytics/trends`, {
+            headers: { "Authorization": `Bearer ${token}` }
+        });
+        if (res.status === 401) {
+            handleExpiredSession();
+            return;
+        }
+        if (res.ok) {
+            const data = await res.json();
+            if (data.sleep_hours_trend) {
+                sleepHoursList = data.sleep_hours_trend;
+            }
+            if (data.recovery_index_trend) {
+                trendScores = data.recovery_index_trend;
+            }
+            if (data.checks_count !== undefined) {
+                const countEl = document.getElementById("statChecksCount");
+                if (countEl) countEl.textContent = data.checks_count;
+            }
+        }
+    } catch (e) {
+        console.error("Failed to fetch analytics trends", e);
+    }
+}
 
 document.addEventListener("DOMContentLoaded", async () => {
     // 1. Sync User Session credentials
@@ -186,34 +231,123 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
     }
 
+    // Unhide body immediately as credentials exist locally
+    document.body.style.setProperty("display", "flex", "important");
+
     // Set Welcome elements
     document.querySelectorAll(".patient-name-placeholder").forEach(el => el.textContent = user);
-    document.getElementById("userNameDisplay").textContent = user;
-    document.getElementById("avatarLetter").textContent = user.charAt(0).toUpperCase();
+    const uNameDisplay = document.getElementById("userNameDisplay");
+    if (uNameDisplay) uNameDisplay.textContent = user;
+    // Sync custom profile photo or fallback avatar
+    syncAvatarDisplay();
 
     // 2. Fetch Settings
-    await loadUserSettings();
+    try {
+        await loadUserSettings();
+    } catch (e) {
+        console.error("Error loading user settings", e);
+    }
 
     // 3. Load Profile details from Server
-    await loadPatientProfileDetails();
+    try {
+        await loadPatientProfileDetails();
+    } catch (e) {
+        console.error("Error loading patient profile details", e);
+    }
 
     // 4. Render Symptoms Chips
-    renderSymptomChips();
+    try {
+        renderSymptomChips();
+    } catch (e) {
+        console.error("Error rendering symptom chips", e);
+    }
 
     // 5. Render Disease Knowledge
-    renderKnowledgeList();
+    try {
+        renderKnowledgeList();
+    } catch (e) {
+        console.error("Error rendering knowledge list", e);
+    }
 
     // 6. Water and Checklists
-    await fetchWaterIntake();
-    await fetchRecoveryTasks();
-    await fetchMedicines();
+    try {
+        await fetchWaterIntake();
+    } catch (e) {
+        console.error("Error fetching water intake", e);
+    }
+    try {
+        await fetchRecoveryTasks();
+    } catch (e) {
+        console.error("Error fetching recovery tasks", e);
+    }
+    try {
+        await fetchMedicines();
+    } catch (e) {
+        console.error("Error fetching medicines", e);
+    }
 
     // 7. Load predictions history
-    await loadHistoryData();
+    try {
+        await loadHistoryData();
+    } catch (e) {
+        console.error("Error loading history data", e);
+        // Ensure body is displayed even if history load fails
+        document.body.style.setProperty("display", "flex", "important");
+    }
+
+    // Fetch analytics trends
+    try {
+        await fetchAnalyticsTrends();
+    } catch (e) {
+        console.error("Error loading analytics trends", e);
+    }
 
     // 8. Initialize charts & rotating tips
-    initializeCharts();
-    rotateDailyTip();
+    try {
+        initializeCharts();
+        rotateDailyTip();
+    } catch (e) {
+        console.error("Error initializing charts and tips", e);
+    }
+
+    // Custom Confirm Modal hookups
+    const cancelBtn = document.getElementById("customConfirmCancelBtn");
+    const okBtn = document.getElementById("customConfirmOkBtn");
+    const modal = document.getElementById("customConfirmModal");
+    
+    if (cancelBtn) {
+        cancelBtn.addEventListener("click", () => {
+            closeCustomConfirm();
+        });
+    }
+    
+    if (okBtn) {
+        okBtn.addEventListener("click", () => {
+            if (confirmCallback) {
+                confirmCallback();
+            }
+            closeCustomConfirm();
+        });
+    }
+    
+    if (modal) {
+        modal.addEventListener("click", (e) => {
+            if (e.target === modal) {
+                closeCustomConfirm();
+            }
+        });
+    }
+
+    // Close sidebar when clicking outside on mobile
+    document.addEventListener("click", (e) => {
+        const sidebar = document.querySelector(".sidebar");
+        const menuTrigger = document.querySelector(".mobile-menu-trigger");
+        if (sidebar && sidebar.classList.contains("mobile-open")) {
+            if (!sidebar.contains(e.target) && (!menuTrigger || !menuTrigger.contains(e.target))) {
+                sidebar.classList.remove("mobile-open");
+            }
+        }
+    });
 });
 
 // Rotate tip of the day
@@ -267,9 +401,16 @@ async function loadUserSettings() {
         const res = await fetch(`${API}/api/settings`, {
             headers: { "Authorization": `Bearer ${token}` }
         });
+        if (res.status === 401) {
+            handleExpiredSession();
+            return;
+        }
         if (res.ok) {
-            // Force light mode theme
-            document.documentElement.setAttribute("data-theme", "light");
+            const data = await res.json();
+            const theme = data.dark_mode ? "dark" : "light";
+            document.documentElement.setAttribute("data-theme", theme);
+            localStorage.setItem("theme", theme);
+            updateThemeBtnDisplay(theme);
         }
     } catch (e) {
         console.error("Failed to load user settings:", e);
@@ -290,8 +431,19 @@ function switchTab(tabId, element) {
         titleEl.textContent = element.querySelector("span").textContent;
     }
 
+    // Close mobile sidebar if open
+    const sidebar = document.querySelector(".sidebar");
+    if (sidebar) sidebar.classList.remove("mobile-open");
+
     if (tabId === "recoveryTab" || tabId === "dashboardTab") {
         setTimeout(() => initializeCharts(), 100);
+    }
+}
+
+function toggleSidebarMenu() {
+    const sidebar = document.querySelector(".sidebar");
+    if (sidebar) {
+        sidebar.classList.toggle("mobile-open");
     }
 }
 
@@ -306,6 +458,7 @@ function renderSymptomChips() {
             chip.className = "symptom-chip";
             chip.dataset.key = item.key;
             chip.dataset.label = item.label;
+            chip.dataset.tags = (item.tags || []).join(" ");
             chip.id = item.id;
             chip.innerHTML = `<span>${item.label}</span><i class="fa-solid fa-plus" style="font-size:10px;"></i>`;
             chip.addEventListener("click", () => {
@@ -332,7 +485,8 @@ function filterSymptomChips() {
     const query = document.getElementById("symptomSearchInput").value.toLowerCase();
     document.querySelectorAll(".symptom-chip").forEach(chip => {
         const text = chip.dataset.label.toLowerCase();
-        if (text.includes(query)) {
+        const tags = chip.dataset.tags ? chip.dataset.tags.toLowerCase() : "";
+        if (text.includes(query) || tags.includes(query)) {
             chip.classList.remove("hidden");
         } else {
             chip.classList.add("hidden");
@@ -422,7 +576,7 @@ function updateDashboardWidgets() {
     // Weight and Height BMIs
     const height = parseFloat(localStorage.getItem("profile_height") || "175");
     const weight = parseFloat(localStorage.getItem("profile_weight") || "70");
-    const bmi = roundVal(weight / ((height / 100) ** 2));
+    const bmi = height > 0 ? roundVal(weight / ((height / 100) ** 2)) : 0;
     
     document.getElementById("statBMIDisplay").textContent = bmi;
     const bmiStatus = document.getElementById("statBMIStatus");
@@ -453,8 +607,12 @@ function updateDashboardWidgets() {
     }
 
     // Goal Checklist Completion impact
-    const checked = document.querySelectorAll("#recoveryTab input[type='checkbox']:checked").length;
-    score = Math.min(score - (4 - checked) * 3 + Math.min(waterCups, 8), 100);
+    const barElement = document.getElementById("recoveryGoalFill");
+    let progressPercent = 0;
+    if (barElement && barElement.style.width) {
+        progressPercent = parseInt(barElement.style.width) || 0;
+    }
+    score = Math.min(score - Math.round((100 - progressPercent) * 0.15) + Math.min(waterCups, 8), 100);
     
     const scoreEl = document.getElementById("dashboardHealthScore");
     if (scoreEl) {
@@ -473,6 +631,15 @@ function updateDashboardWidgets() {
     }
 }
 
+function formatDateDDMMYYYY(timestamp) {
+    const d = timestamp ? new Date(timestamp) : new Date();
+    if (isNaN(d.getTime())) return "";
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = d.getFullYear();
+    return `${day}/${month}/${year}`;
+}
+
 function renderHistoryTables() {
     const list = document.getElementById("dashboardChecksHistory");
     if (!list) return;
@@ -485,7 +652,7 @@ function renderHistoryTables() {
     }
 
     historyData.forEach(item => {
-        const date = item.timestamp ? new Date(item.timestamp).toLocaleDateString() : new Date().toLocaleDateString();
+        const date = formatDateDDMMYYYY(item.timestamp);
         
         let riskClass = "badge-low";
         let riskText = item.risk_level || "Low";
@@ -531,22 +698,44 @@ function filterHistory() {
     });
 }
 
+let confirmCallback = null;
+
+function showCustomConfirm(message, callback) {
+    const modal = document.getElementById("customConfirmModal");
+    const msgEl = document.getElementById("customConfirmMessage");
+    if (!modal || !msgEl) {
+        if (confirm(message)) callback();
+        return;
+    }
+    msgEl.textContent = message;
+    confirmCallback = callback;
+    modal.classList.add("active");
+}
+
+function closeCustomConfirm() {
+    const modal = document.getElementById("customConfirmModal");
+    if (modal) modal.classList.remove("active");
+    confirmCallback = null;
+}
+
 async function deleteHistoryRecord(id) {
     const token = localStorage.getItem("token") || sessionStorage.getItem("token");
-    if (!confirm("Are you sure you want to delete this checkup from your history?")) return;
-    
-    try {
-        const res = await fetch(`${API}/history/${id}`, {
-            method: "DELETE",
-            headers: { "Authorization": `Bearer ${token}` }
-        });
-        if (res.ok) {
-            showToast("Record removed successfully", "success");
-            await loadHistoryData();
+    showCustomConfirm("Are you sure you want to delete this checkup from your history?", async () => {
+        try {
+            const res = await fetch(`${API}/history/${id}`, {
+                method: "DELETE",
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+            if (res.ok) {
+                showToast("Record removed successfully", "success");
+                await loadHistoryData();
+            } else {
+                showToast("Failed to delete record", "error");
+            }
+        } catch (e) {
+            showToast("Failed to delete record", "error");
         }
-    } catch (e) {
-        showToast("Failed to delete record", "error");
-    }
+    });
 }
 
 // Predict Submit
@@ -602,50 +791,58 @@ async function runSymptomPrediction(event) {
         setTimeout(() => {
             document.getElementById("checkerSkeleton").classList.add("hidden");
 
-            if (result.emergency_detected) {
-                // Render Emergency RED card
-                document.getElementById("outEmergencySymptoms").textContent = result.metadata.symptoms.join(", ");
-                document.getElementById("outEmergencyAlert").classList.remove("hidden");
-                showToast("CRITICAL ALERT: Seek Immediate Care!", "error");
-            } else {
-                // Render normal prediction outcome
-                document.getElementById("outDiseaseName").textContent = result.disease;
-                document.getElementById("outConfidenceText").textContent = result.confidence;
-                document.getElementById("outGaugeFill").style.width = result.confidence;
+            // Toggle Emergency Warning Banner
+            const eBanner = document.getElementById("resultEmergencyBanner");
+            if (eBanner) {
+                if (result.emergency_detected) {
+                    const eSymptoms = document.getElementById("resultEmergencySymptomsList");
+                    if (eSymptoms) eSymptoms.textContent = (result.emergency_symptoms || []).join(", ");
+                    eBanner.classList.remove("hidden");
+                    showToast("CRITICAL WARNING: Emergency Symptoms Indicated!", "error");
+                } else {
+                    eBanner.classList.add("hidden");
+                }
+            }
 
-                // Set badges
-                const rText = result.risk_level;
-                const rBadge = document.getElementById("outRiskBadge");
-                document.getElementById("outRiskText").textContent = `${rText} Risk Level`;
-                rBadge.className = `risk-indicator ${rText.toLowerCase()}`;
+            // Render prediction outcome
+            document.getElementById("outDiseaseName").textContent = result.disease;
+            document.getElementById("outConfidenceText").textContent = result.confidence;
+            document.getElementById("outGaugeFill").style.width = result.confidence;
 
-                const sText = result.severity;
-                const sBadge = document.getElementById("outSeverityBadge");
-                document.getElementById("outSeverityText").textContent = `${sText} Severity`;
-                sBadge.className = `risk-indicator info ${sText.toLowerCase()}`;
+            // Set badges
+            const rText = result.risk_level;
+            const rBadge = document.getElementById("outRiskBadge");
+            document.getElementById("outRiskText").textContent = `${rText} Risk Level`;
+            rBadge.className = `risk-indicator ${rText.toLowerCase()}`;
 
-                // Set descriptions and explain details
-                document.getElementById("outDescription").textContent = result.metadata.description;
-                document.getElementById("outWhyExplanation").textContent = result.why_predicted;
-                
-                document.getElementById("outFoodsEat").textContent = result.metadata.foods_to_eat.join(", ");
-                document.getElementById("outFoodsAvoid").textContent = result.metadata.foods_to_avoid.join(", ");
-                document.getElementById("outHydration").textContent = result.metadata.hydration;
-                document.getElementById("outSleep").textContent = result.metadata.sleep;
-                document.getElementById("outActions").textContent = result.metadata.actions.join(". ");
+            const sText = result.severity;
+            const sBadge = document.getElementById("outSeverityBadge");
+            document.getElementById("outSeverityText").textContent = `${sText} Severity`;
+            sBadge.className = `risk-indicator info ${sText.toLowerCase()}`;
 
-                const matchesContainer = document.getElementById("outTopMatchesList");
-                matchesContainer.innerHTML = "";
-                (result.top_3_diseases || []).forEach(match => {
-                    const ch = document.createElement("span");
-                    ch.className = "symptom-chip selected";
-                    ch.style.fontSize = "11px";
-                    ch.style.padding = "4px 10px";
-                    ch.textContent = `${match.disease} (${match.confidence})`;
-                    matchesContainer.appendChild(ch);
-                });
+            // Set descriptions and explain details
+            document.getElementById("outDescription").textContent = result.metadata.description;
+            document.getElementById("outWhyExplanation").textContent = result.why_predicted;
+            
+            document.getElementById("outFoodsEat").textContent = (result.metadata.foods_to_eat || []).join(", ");
+            document.getElementById("outFoodsAvoid").textContent = (result.metadata.foods_to_avoid || []).join(", ");
+            document.getElementById("outHydration").textContent = result.metadata.hydration;
+            document.getElementById("outSleep").textContent = result.metadata.sleep;
+            document.getElementById("outActions").textContent = (result.metadata.actions || []).join(". ");
 
-                document.getElementById("checkerResultContent").classList.remove("hidden");
+            const matchesContainer = document.getElementById("outTopMatchesList");
+            matchesContainer.innerHTML = "";
+            (result.top_3_diseases || []).forEach(match => {
+                const ch = document.createElement("span");
+                ch.className = "symptom-chip selected";
+                ch.style.fontSize = "11px";
+                ch.style.padding = "4px 10px";
+                ch.textContent = `${match.disease} (${match.confidence})`;
+                matchesContainer.appendChild(ch);
+            });
+
+            document.getElementById("checkerResultContent").classList.remove("hidden");
+            if (!result.emergency_detected) {
                 showToast("AI medical prediction loaded", "success");
             }
 
@@ -677,6 +874,10 @@ async function fetchWaterIntake() {
         const res = await fetch(`${API}/api/trackers/water`, {
             headers: { "Authorization": `Bearer ${token}` }
         });
+        if (res.status === 401) {
+            handleExpiredSession();
+            return;
+        }
         if (res.ok) {
             const data = await res.json();
             waterCups = data.cups;
@@ -739,6 +940,10 @@ async function fetchRecoveryTasks() {
         const res = await fetch(`${API}/api/trackers/recovery`, {
             headers: { "Authorization": `Bearer ${token}` }
         });
+        if (res.status === 401) {
+            handleExpiredSession();
+            return;
+        }
         if (res.ok) {
             const list = await res.json();
             list.forEach(task => {
@@ -772,14 +977,50 @@ async function toggleChecklistTask(id) {
 }
 
 function updateGoalCompletionPercentage() {
-    const chks = document.querySelectorAll("#recoveryTab input[type='checkbox']");
-    let total = chks.length;
-    let checked = 0;
-    chks.forEach(c => { if (c.checked) checked++; });
+    // Explicitly select only the daily checklist habit checkboxes
+    const habitIds = ['chkMeds', 'chkHydrate', 'chkRest', 'chkLightMeals'];
+    let totalHabits = habitIds.length;
+    let checkedHabits = 0;
     
-    // Water and Meds influence goal bar
-    const waterFactor = Math.min(waterCups / 8, 1);
-    const progress = total > 0 ? Math.round(((checked / total) * 0.7 + waterFactor * 0.3) * 100) : 0;
+    // Force sync chkHydrate check state in DOM
+    const chkHydrate = document.getElementById('chkHydrate');
+    if (chkHydrate) {
+        chkHydrate.checked = waterCups >= 8;
+    }
+    
+    habitIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && el.checked) checkedHabits++;
+    });
+    
+    // Habits progress (35%)
+    const habitsProgress = checkedHabits / totalHabits;
+    
+    // Water progress (30%)
+    const waterProgress = Math.min(waterCups / 8, 1);
+    
+    // Medicines progress (35%)
+    const medReminders = document.querySelectorAll("#medicineReminderList input[type='checkbox']");
+    let medsProgress = 1.0; // Default to 100% completed if no medicines are scheduled
+    if (medReminders.length > 0) {
+        let takenMeds = 0;
+        medReminders.forEach(m => { if (m.checked) takenMeds++; });
+        medsProgress = takenMeds / medReminders.length;
+        
+        // Auto-check the daily meds task if all reminders are completed
+        const chkMeds = document.getElementById('chkMeds');
+        if (chkMeds) {
+            chkMeds.checked = takenMeds === medReminders.length;
+        }
+    } else {
+        const chkMeds = document.getElementById('chkMeds');
+        if (chkMeds) {
+            medsProgress = chkMeds.checked ? 1.0 : 0.0;
+        }
+    }
+    
+    // Final combined progress out of 100
+    const progress = Math.round((waterProgress * 0.3 + habitsProgress * 0.35 + medsProgress * 0.35) * 100);
     
     const bar = document.getElementById("recoveryGoalFill");
     const label = document.getElementById("recoveryPctText");
@@ -796,6 +1037,10 @@ async function fetchMedicines() {
         const res = await fetch(`${API}/api/trackers/medicine`, {
             headers: { "Authorization": `Bearer ${token}` }
         });
+        if (res.status === 401) {
+            handleExpiredSession();
+            return;
+        }
         if (res.ok) {
             const list = await res.json();
             renderMedicinesList(list);
@@ -919,6 +1164,10 @@ async function loadPatientProfileDetails() {
         const res = await fetch(`${API}/profile`, {
             headers: { "Authorization": `Bearer ${token}` }
         });
+        if (res.status === 401) {
+            handleExpiredSession();
+            return;
+        }
         if (!res.ok) throw new Error();
 
         const profile = await res.json();
@@ -945,8 +1194,6 @@ async function loadPatientProfileDetails() {
         document.getElementById("profileWeight").value = profile.weight;
         document.getElementById("profileBloodGroup").value = profile.blood_group;
         document.getElementById("profileEmergencyContact").value = profile.emergency_contact === "None" ? "" : profile.emergency_contact;
-        document.getElementById("profileHistory").value = profile.medical_history === "None" ? "" : profile.medical_history;
-        document.getElementById("profileAllergies").value = profile.allergies === "None" ? "" : profile.allergies;
 
         // BMI details
         document.getElementById("profileBMIText").textContent = profile.bmi;
@@ -965,12 +1212,15 @@ async function loadPatientProfileDetails() {
             statusBadge.className = "badge-pill badge-critical";
         }
 
-        // Update welcome text, header profile name and avatar letter with new profile name
+        // Update welcome text, header profile name
         document.querySelectorAll(".patient-name-placeholder").forEach(el => el.textContent = profile.name);
         document.getElementById("userNameDisplay").textContent = profile.name;
-        document.getElementById("avatarLetter").textContent = profile.name.charAt(0).toUpperCase();
+        
+        // Update portal left card name dynamically
+        document.getElementById("profileNameDisplay").textContent = profile.name;
 
         updateDashboardWidgets();
+        syncAvatarDisplay();
 
     } catch (e) {
         console.error("Failed to load profile details", e);
@@ -989,8 +1239,8 @@ async function savePatientProfile(event) {
         weight: parseFloat(document.getElementById("profileWeight").value),
         blood_group: document.getElementById("profileBloodGroup").value.trim() || "Unknown",
         emergency_contact: document.getElementById("profileEmergencyContact").value.trim() || "None",
-        medical_history: document.getElementById("profileHistory").value.trim() || "None",
-        allergies: document.getElementById("profileAllergies").value.trim() || "None",
+        medical_history: "None",
+        allergies: "None",
         profile_picture: ""
     };
 
@@ -1121,8 +1371,8 @@ function initializeCharts() {
             datasets: [{
                 label: "Sleep Duration (Hours)",
                 data: sleepHoursList,
-                borderColor: "#1a73e8",
-                backgroundColor: "rgba(26, 115, 232, 0.08)",
+                borderColor: "#6366f1",
+                backgroundColor: "rgba(99, 102, 241, 0.08)",
                 tension: 0.3,
                 fill: true,
                 borderWidth: 2
@@ -1139,7 +1389,7 @@ function initializeCharts() {
         }
     });
 
-    const trendScores = [88, 89, 90, 88, 91, 93, 92];
+    // trendScores is defined globally and populated via fetchAnalyticsTrends
     recoveryChart = new Chart(recoveryCtx, {
         type: "line",
         data: {
@@ -1147,8 +1397,8 @@ function initializeCharts() {
             datasets: [{
                 label: "Health Index Score",
                 data: trendScores,
-                borderColor: "#007b83",
-                backgroundColor: "rgba(0, 123, 131, 0.08)",
+                borderColor: "#a855f7",
+                backgroundColor: "rgba(168, 85, 247, 0.08)",
                 tension: 0.3,
                 fill: true,
                 borderWidth: 2
@@ -1178,3 +1428,56 @@ function handleLogout() {
 function roundVal(v) {
     return Math.round(v * 10) / 10;
 }
+
+function syncAvatarDisplay() {
+    const savedPhoto = localStorage.getItem("profile_photo");
+    const user = localStorage.getItem("user") || "User";
+    const letter = user.charAt(0).toUpperCase();
+
+    // Update text of fallback spans
+    document.querySelectorAll("#avatarLetter .avatar-text, #profileAvatarLetter .avatar-text").forEach(el => el.textContent = letter);
+
+    const removeBtn = document.getElementById("removePhotoBtn");
+
+    if (savedPhoto) {
+        // Show image and hide letter spans
+        document.querySelectorAll("#avatarLetter img, #profileAvatarLetter img").forEach(img => {
+            img.src = savedPhoto;
+            img.style.display = "block";
+        });
+        document.querySelectorAll("#avatarLetter .avatar-text, #profileAvatarLetter .avatar-text").forEach(el => {
+            el.style.display = "none";
+        });
+        if (removeBtn) removeBtn.style.display = "inline-flex";
+    } else {
+        // Hide image and show letter spans
+        document.querySelectorAll("#avatarLetter img, #profileAvatarLetter img").forEach(img => {
+            img.src = "";
+            img.style.display = "none";
+        });
+        document.querySelectorAll("#avatarLetter .avatar-text, #profileAvatarLetter .avatar-text").forEach(el => {
+            el.style.display = "block";
+        });
+        if (removeBtn) removeBtn.style.display = "none";
+    }
+}
+
+window.uploadProfilePhoto = function(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const base64Data = e.target.result;
+            localStorage.setItem("profile_photo", base64Data);
+            syncAvatarDisplay();
+            showToast("Profile photo uploaded successfully!", "success");
+        };
+        reader.readAsDataURL(file);
+    }
+};
+
+window.removeProfilePhoto = function() {
+    localStorage.removeItem("profile_photo");
+    syncAvatarDisplay();
+    showToast("Profile photo removed.", "info");
+};

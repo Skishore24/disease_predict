@@ -35,8 +35,8 @@
                 <a href="#faq" style="font-weight: 500;">FAQ</a>
             </nav>
             <div class="nav-cta">
-                <a href="login.html" class="btn-outline" style="border-radius: 50px; border-color: var(--text-primary); padding: 8px 22px;">Sign In</a>
-                <a href="login.html?mode=register" class="btn-primary" style="border-radius: 50px; background: #0f172a; border: none; padding: 10px 24px; box-shadow: none;">Get Started</a>
+                <a href="login.html" class="btn-outline" style="border-radius: 50px; border-color: var(--primary); color: var(--primary); padding: 8px 22px;">Sign In</a>
+                <a href="login.html?mode=register" class="btn-primary" style="border-radius: 50px; background: var(--primary); border: none; padding: 10px 24px; color: white;" >Get Started</a>
             </div>
         </div>
     </header>
@@ -50,18 +50,10 @@
                 <p style="font-size: 18px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 32px; font-weight: 400;">An intelligent, patient-friendly AI health companion that helps you understand symptoms, predict potential conditions, and provides clear recovery checklists, water tracking, and wellness guidance.</p>
                 <div class="hero-actions" style="margin-bottom: 32px;">
                     <a href="dashboard.html" class="btn-primary btn-lg" style="border-radius: 50px; padding: 14px 32px; background: var(--primary); font-weight: 700; box-shadow: 0 10px 25px rgba(99, 102, 241, 0.35);">Check Symptoms Now <i class="fa-solid fa-arrow-right"></i></a>
-                    <a href="#how-it-works" class="btn-secondary btn-lg" style="border-radius: 50px; padding: 14px 32px; font-weight: 700; background: var(--border-color); color: var(--text-primary);">See How It Works</a>
+                    <a href="#how-it-works" class="btn-secondary btn-lg" style="border-radius: 50px; padding: 14px 32px; font-weight: 700; background: var(--primary-light); color: var(--primary);">See How It Works</a>
                 </div>
                 
-                <!-- User Avatar list widget -->
-                <div class="patient-avatars" style="display: flex; align-items: center; gap: 12px; margin-top: 40px; border-top: 1.5px solid var(--border-color); padding-top: 24px;">
-                    <div class="avatar-group" style="display: flex; margin-left: 10px;">
-                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80" style="width:38px; height:38px; border-radius:50%; border:2px solid white; object-fit:cover; margin-right: -10px;">
-                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80" style="width:38px; height:38px; border-radius:50%; border:2px solid white; object-fit:cover; margin-right: -10px;">
-                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80" style="width:38px; height:38px; border-radius:50%; border:2px solid white; object-fit:cover;">
-                    </div>
-                    <span style="font-size: 14px; color: var(--text-secondary); font-weight: 500; margin-left:12px;">More than <strong>1,000+ patients</strong> completed active recovery checklists this week.</span>
-                </div>
+
             </div>
             
             <div class="hero-visual">
@@ -99,14 +91,14 @@
                     
                     <!-- Floating badge widget -->
                     <div class="floating-mock-badge" style="position: absolute; bottom: 35px; right: 10px; background: white; border-radius: 50px; padding: 10px 20px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08); display: flex; align-items: center; gap: 10px; border: 1.5px solid var(--border-color); z-index: 3; animation: hoverWidget 4s infinite ease-in-out;">
-                        <div style="width: 28px; height: 28px; border-radius: 50%; background: #22c55e; color: white; display: flex; align-items: center; justify-content: center; font-size: 12px;"><i class="fa-solid fa-phone"></i></div>
-                        <span style="font-size: 12px; font-weight: 700; color: #0f172a;">Connecting to AI...</span>
+                        <div style="width: 28px; height: 28px; border-radius: 50%; background: #22c55e; color: white; display: flex; align-items: center; justify-content: center; font-size: 12px;"><i class="fa-solid fa-brain"></i></div>
+                        <span style="font-size: 12px; font-weight: 700; color: #0f172a;">AI Diagnostics Active</span>
                     </div>
 
                     <!-- Left side floating info widget -->
                     <div class="floating-mock-badge-left" style="position: absolute; top: 40px; left: -10px; background: white; border-radius: 16px; padding: 12px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08); border: 1.5px solid var(--border-color); z-index: 3; display: flex; flex-direction: column; gap: 4px; animation: hoverWidgetLeft 4s infinite ease-in-out; animation-delay: -2s;">
-                        <span style="font-size: 10px; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Recovery Index</span>
-                        <span style="font-size: 16px; font-weight: 800; color: #007b83;"><i class="fa-solid fa-chart-line"></i> 95.8%</span>
+                        <span style="font-size: 10px; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Diagnostic Accuracy</span>
+                        <span style="font-size: 16px; font-weight: 800; color: #10b981;"><i class="fa-solid fa-circle-check"></i> 95.8%</span>
                     </div>
                 </div>
             </div>
@@ -121,7 +113,7 @@
             
             <div class="steps-grid">
                 <div class="step-card">
-                    <div class="step-icon"><i class="fa-solid fa-magnifying-glass-lazy"></i></div>
+                    <div class="step-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
                     <h3>1. Input Symptoms</h3>
                     <p>Select your symptoms from our easy-to-use checklist. Tell us your medical vitals like temperature, blood pressure, and heart rate.</p>
                 </div>
@@ -256,29 +248,46 @@
     </section>
 
     <!-- Footer -->
-    <footer class="footer" style="border-top: 1.5px solid var(--border-color); padding: 60px 0 30px 0; background: var(--bg-secondary);">
-        <div class="container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px;">
-            <div class="footer-brand" style="display: flex; flex-direction: column; gap: 16px;">
-                <div class="logo" style="display: flex; align-items: center; gap: 10px;">
-                    <div class="logo-icon" style="background: var(--primary); width: 36px; height: 36px; border-radius: 10px; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 18px;"><i class="fa-solid fa-heart-pulse"></i></div>
-                    <span style="font-weight: 700; font-size: 20px; color: var(--text-primary);">MediPredict AI</span>
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container footer-grid">
+            <div class="footer-brand-section">
+                <div class="logo">
+                    <div class="logo-icon"><i class="fa-solid fa-heart-pulse"></i></div>
+                    <span class="logo-text">MediPredict <span class="accent">AI</span></span>
                 </div>
-                <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.6;">Empowering individuals to understand symptom patterns and wellness metrics with state-of-the-art AI assistance.</p>
+                <p class="brand-tagline">Empowering individuals with intelligent symptom tracking, clinical insights, and structured recovery companion tools.</p>
+                <div class="social-links">
+                    <a href="#" class="social-btn" title="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+                    <a href="#" class="social-btn" title="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+                    <a href="#" class="social-btn" title="GitHub"><i class="fa-brands fa-github"></i></a>
+                </div>
             </div>
-            <div class="footer-col" style="display: flex; flex-direction: column; gap: 12px;">
-                <h4 style="font-size: 15px; font-weight: 700; color: var(--text-primary);">Application Links</h4>
-                <a href="#how-it-works" style="font-size: 14px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; font-weight: 500;">How It Works</a>
-                <a href="#disease-awareness" style="font-size: 14px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; font-weight: 500;">Diseases</a>
-                <a href="#health-tips" style="font-size: 14px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; font-weight: 500;">Health Tips</a>
-                <a href="#faq" style="font-size: 14px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; font-weight: 500;">FAQ</a>
+            
+            <div class="footer-links-section">
+                <h4 class="footer-title">Application Links</h4>
+                <nav class="footer-links">
+                    <a href="#how-it-works"><i class="fa-solid fa-chevron-right link-arrow"></i> How It Works</a>
+                    <a href="#disease-awareness"><i class="fa-solid fa-chevron-right link-arrow"></i> Understand Diseases</a>
+                    <a href="#health-tips"><i class="fa-solid fa-chevron-right link-arrow"></i> Daily Wellness Tips</a>
+                    <a href="#faq"><i class="fa-solid fa-chevron-right link-arrow"></i> FAQs & Security</a>
+                </nav>
             </div>
-            <div class="footer-col" style="display: flex; flex-direction: column; gap: 12px;">
-                <h4 style="font-size: 15px; font-weight: 700; color: var(--text-primary);">Important Disclaimer</h4>
-                <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.6;">This service is for educational and informational purposes only. It is not a substitute for professional medical advice, clinical diagnosis, or treatment. Always seek the advice of your physician or other qualified health provider with any questions you may have regarding a medical condition.</p>
+            
+            <div class="footer-disclaimer-section">
+                <h4 class="footer-title">Important Medical Disclaimer</h4>
+                <p class="disclaimer-text">This service is for educational and informational purposes only. It is <strong>not a substitute</strong> for professional medical advice, clinical diagnosis, or active treatment. Always consult a certified healthcare professional before making clinical decisions.</p>
             </div>
         </div>
-        <div style="border-top: 1px solid var(--border-color); padding-top: 24px; text-align: center; margin-top: 40px;">
-            <p style="font-size: 13px; color: var(--text-muted);">&copy; 2026 MediPredict AI. All rights reserved. Educational wellness application.</p>
+        
+        <div class="footer-bottom">
+            <div class="container bottom-container">
+                <p class="copyright">&copy; 2026 MediPredict AI. All rights reserved. Built for intelligent wellness & support.</p>
+                <div class="bottom-links">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                </div>
+            </div>
         </div>
     </footer>
 
